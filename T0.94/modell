@@ -1,0 +1,25 @@
+initBoard 
+
+while (!gameOver)
+	getBoard
+	getInput 
+	if (isMove)
+		if (checkMove)
+			doMove
+		else
+			revert move
+	else 
+		extendBoard(center, interval)
+
+# Main elements
+----------
+Ncurses 
+	color 
+	blink
+	...
+----------
+Linked List
+	two way linked list
+	x/y axis
+----------
+
