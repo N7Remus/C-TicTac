@@ -265,16 +265,16 @@ int main(int argc, char const *argv[]) {
     
     list->addNewNodes(0, -10);
     cout << "Size: LL : " << list->length_neg << endl;
-    cout << "data : " << list->getData(0, 0) << endl;
+//    cout << "data : " << list->getData(0, 0) << endl;
     cout << "Size SL : " << list->node_head->subs_length_neg << endl;
-//    head = list->node_head->subnode_head;
-//    i = 0;
-//    while (head) {
-//        cout << head->data;
-//        head = head->subnode_next;
-//        i++;
-//    }
-//    cout << endl << "i:" << i;
+    head = list->node_head->subnode_tail;
+    i = 0;
+    while (head) {
+        cout << head->data;
+        head = head->subnode_prew;
+        i++;
+    }
+    cout << endl << "i:" << i;
     
     //    list->addNewNodes(0, 1);
     //    cout << "Size LL: "<<list->length_pos << endl;
