@@ -44,7 +44,7 @@ public:
 
     void addToHead(int data) {
         SubNode* subnode = new SubNode();
-        subnode->data = data; //rand() % 10; 
+        subnode->data = abs(data); //rand() % 10; 
         subnode->subnode_next = this->subnode_head;
         this->subnode_head = subnode;
         this->subs_length_pos++;
@@ -52,7 +52,7 @@ public:
 
     void addToTail(int data) {
         SubNode* subnode = new SubNode();
-        subnode->data = data; //rand() % 10; //data;
+        subnode->data = abs(data); //rand() % 10; //data;
         subnode->subnode_prew = this->subnode_tail;
         this->subnode_tail = subnode;
         this->subs_length_neg++;
@@ -77,12 +77,12 @@ public:
                 head = head->subnode_next;
                 i++;
             }
-
-            return head->data;
+            if (head)
+                return head->data;
 
             //                return head->data; // == abs(y);
         }
-        //        return 0;
+        return 0;
     }
     //    void print() {
     //        SubNode* head = this->subnode_head;
@@ -230,51 +230,75 @@ public:
     //    void print_neg();
 };
 
+LinkedList* list = new LinkedList();
+
+int getValue(int x, int y) {
+    Node* node;
+    SubNode* subnode;
+    int i = 0;
+    list->addNewNodes(x, y);
+
+    if (x < 0) {
+        node = list->node_tail;
+    } else {
+        node = list->node_head;
+        if (y < 0) {
+            subnode = node->subnode_tail;
+            while (subnode) {
+                if (i == abs(y))
+                    return subnode->data;
+                subnode = subnode->subnode_prew;
+                i++;
+            }
+        } else {
+            subnode = node->subnode_head;
+            while (subnode) {
+                if (i == abs(y))
+                    return subnode->data;
+                subnode = subnode->subnode_next;
+                i++;
+            }
+        }
+    }
+
+
+    return 0;
+}
+
 int main(int argc, char const *argv[]) {
-    LinkedList* list = new LinkedList();
     int current_pos[2] = {0, 0};
     bool win = false;
     int vision = 2;
     int c = 0;
     int x = 1;
-    list->addNewNodes(0, 100);
-    cout << "Size: LL : " << list->length_pos << endl;
-    cout << "data : " << list->getData(0, 0) << endl;
-    cout << "Size SL : " << list->node_head->subs_length_pos << endl;
-    SubNode* head = list->node_head->subnode_head;
-    int i = 0;
-    while (head) {
-        cout << head->data;
-        head = head->subnode_next;
-        i++;
-    }
-    cout << endl << "i:" << i << endl;
-    
-    list->addNewNodes(0, 1011);
-    cout << "Size: LL : " << list->length_pos << endl;
-    cout << "data : " << list->getData(0, 0) << endl;
-    cout << "Size SL : " << list->node_head->subs_length_pos << endl;
-    head = list->node_head->subnode_head;
-    i = 0;
-    while (head) {
-        cout << head->data;
-        head = head->subnode_next;
-        i++;
-    }
-    cout << endl << "i:" << i;
-    
-    list->addNewNodes(0, -10);
-    cout << "Size: LL : " << list->length_neg << endl;
+//    list->addNewNodes(0, 10);
+//    cout << "Size: LL : " << list->length_pos << endl;
 //    cout << "data : " << list->getData(0, 0) << endl;
-    cout << "Size SL : " << list->node_head->subs_length_neg << endl;
-    head = list->node_head->subnode_tail;
-    i = 0;
-    while (head) {
-        cout << head->data;
-        head = head->subnode_prew;
-        i++;
-    }
-    cout << endl << "i:" << i;
+//    cout << "Size SL : " << list->node_head->subs_length_pos << endl;
+//    SubNode* head = list->node_head->subnode_head;
+//    int i = 0;
+//    while (head) {
+//        cout << head->data;
+//        head = head->subnode_next;
+//        i++;
+//    }
+//    cout << endl << "i:" << i << endl;
+//
+//    list->addNewNodes(0, 101);
+//    cout << "Size: LL : " << list->length_pos << endl;
+//    cout << "data : " << list->getData(0, 0) << endl;
+//    cout << "Size SL : " << list->node_head->subs_length_pos << endl;
+//    head = list->node_head->subnode_head;
+//    i = 0;
+//    while (head) {
+//        cout << head->data;
+//        head = head->subnode_next;
+//        i++;
+//    }
+//    cout << endl << "i:" << i;
+//
+//    list->addNewNodes(0, -10);
+//    cout << "data : " << getValue(0, -1) << endl;
     
     //    list->addNewNodes(0, 1);
     //    cout << "Size LL: "<<list->length_pos << endl;
@@ -283,48 +307,50 @@ int main(int argc, char const *argv[]) {
     //    list->addNewNodes(0, 3);
     //    cout << list->getData(0, 2);
 
-    //            initscr();
-    //            noecho();
-    //            raw();
-    //            keypad(stdscr, TRUE);
-    //            move(0, 0);
-    //            printw("Kilepeshez (ESC): ");
-    //            do {
-    //                if (c == 97 || c == 260)
-    //                    current_pos[0] = current_pos[0] - 1;
-    //                /*  w  or up */
-    //                if (c == 119 || c == 259)
-    //                    current_pos[1] = current_pos[1] + 1;
-    //                /*  d  or right */
-    //                if (c == 100 || c == 261)
-    //                    current_pos[0] = current_pos[0] + 1;
-    //                /*  s or down  */
-    //                if (c == 115 || c == 258)
-    //                    current_pos[1] = current_pos[1] - 1;
-    //        
-    //                x = 1;
-    //                for (int i = current_pos[0] - vision;
-    //                        i < current_pos[0] + vision + 1;
-    //                        i++) {
-    ////                    move(x, 0);
-    ////                    refresh();
-    //        
-    //                    for (int j = current_pos[0] - vision;
-    //                            j < current_pos[0] + vision + 1;
-    //                            j++) {
-    //                        list->addNewNodes(i, j);
-    //                        //                    cout<<list->getData(i,j);
-    ////                        printw("%d", list->getData(i, j));
-    //                        cout << list->getData(i, j);
-    //        
-    //                    }
-    //                    //            cout << "\n";
-    //                    x++;
-    //        
-    //                }
-    //                move(vision + 1, vision);
-    //            } while ((c = getch()) != 27 && !win);
-    //            endwin();
+                initscr();
+                noecho();
+                raw();
+                keypad(stdscr, TRUE);
+                move(0, 0);
+                printw("Kilepeshez (ESC): ");
+                do {
+                    if (c == 97 || c == 260)
+                        current_pos[0] = current_pos[0] - 1;
+                    /*  w  or up */
+                    if (c == 119 || c == 259)
+                        current_pos[1] = current_pos[1] + 1;
+                    /*  d  or right */
+                    if (c == 100 || c == 261)
+                        current_pos[0] = current_pos[0] + 1;
+                    /*  s or down  */
+                    if (c == 115 || c == 258)
+                        current_pos[1] = current_pos[1] - 1;
+            
+                    x = 1;
+                    for (int i = current_pos[0] - vision;
+                            i < current_pos[0] + vision + 1;
+                            i++) {
+                        move(x, 0);
+                        refresh();
+            
+                        for (int j = current_pos[0] - vision;
+                                j < current_pos[0] + vision + 1;
+                                j++) {
+                            list->addNewNodes(i, j);
+                            //                    cout<<list->getData(i,j);
+                            printw("%d", getValue(i, j));
+//                            cout << get(i, j);
+            
+                        }
+                        //            cout << "\n";
+                        x++;
+            
+                    }
+                    move (x+vision+1,0);
+                    printw("%d ; %d",current_pos[0],current_pos[1]);
+                    move(vision + 1, vision);
+                } while ((c = getch()) != 27 && !win);
+                endwin();
     //
     //        for (int i = 0; i < 100; ++i) {
     //            list->addToHead(i);
