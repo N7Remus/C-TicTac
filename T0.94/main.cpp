@@ -12,13 +12,22 @@
 using namespace std;
 
 class SubNode {
+protected:
+    int data;
 public:
     SubNode* subnode_next;
     SubNode* subnode_prew;
-    int data;
+
+    void _SubNode() {
+        data = 0;
+    }
 
     void setData(int i) {
         data = i;
+    }
+
+    int getData() {
+        return data;
     }
 };
 
@@ -46,7 +55,7 @@ public:
 
     void addToHead(int data) {
         SubNode* subnode = new SubNode();
-        subnode->data = abs(data); //rand() % 10; 
+        subnode->setData(abs(rand() % 10)); //rand() % 10; 
         subnode->subnode_next = this->subnode_head;
         this->subnode_head = subnode;
         this->subs_length_pos++;
@@ -54,7 +63,7 @@ public:
 
     void addToTail(int data) {
         SubNode* subnode = new SubNode();
-        subnode->data = abs(data); //rand() % 10; //data;
+        subnode->setData(abs(0)); //rand() % 10; //data;
         subnode->subnode_prew = this->subnode_tail;
         this->subnode_tail = subnode;
         this->subs_length_neg++;
@@ -225,7 +234,7 @@ int getValue(int x, int y) {
             j++;
         }
     }
-    return subnode->data;
+    return subnode->getData();
     //    return 0;
 }
 
@@ -256,21 +265,39 @@ void setValue(int x, int y, int data) {
     if (y < 0) {
         subnode = node->subnode_tail;
         while (subnode) {
-            if (i == abs(y))
+            if (j == abs(y))
+                //                return subnode->data;
                 break;
             subnode = subnode->subnode_prew;
-            i++;
+            j++;
         }
     } else {
         subnode = node->subnode_head;
         while (subnode) {
-            if (i == abs(y))
+            if (j == abs(y))
                 break;
             subnode = subnode->subnode_next;
-            i++;
+            j++;
         }
     }
     subnode->setData(data);
+
+}
+
+void t() {
+    //    if (list->node_head->subnode_head!=NULL){
+    //        list->node_head->subnode_head->setData(9);
+    //        if (list->node_head->subnode_head->getData()==9)
+    //            exit(9);
+    //    }else {
+    //        exit(0);
+    //    }
+    Node* node = list->node_head;
+    SubNode* sub = node->subnode_head;
+    while (sub) {
+        sub->setData(1);
+        sub = sub->subnode_next;
+    }
 
 }
 
@@ -280,21 +307,24 @@ int main(int argc, char const *argv[]) {
     int vision = 5;
     int c = 0;
     int x = 1;
+    int y = 0;
     int v;
     if (0) {
-//        cout << getValue(-5, -2);
+        //        cout << getValue(-5, -2);
         cout << getValue(-5, 0);
         cout << getValue(0, -2);
         cout << getValue(0, 0);
         cout << getValue(-5, 2);
     } else {
-//        initscr();
-//        noecho();
-//        raw();
-//        keypad(stdscr, TRUE);
-//        move(0, 0);
-//        printw("Kilepeshez (ESC): ");
-//        do {
+        initscr();
+        noecho();
+        raw();
+        keypad(stdscr, TRUE);
+        move(0, 0);
+        printw("Kilepeshez (ESC): ");
+        do {
+            refresh();
+            //            move(1, 0);
             if (c == 97 || c == 260)
                 current_pos[0] = current_pos[0] - 1;
             /*  w  or up */
@@ -308,35 +338,47 @@ int main(int argc, char const *argv[]) {
                 current_pos[1] = current_pos[1] - 1;
             /* space*/
             if (c == 32) {
-                //            return 0;
                 setValue(current_pos[0], current_pos[1], 1);
+                cout << "";
+                t();
+                cout << "";
             }
             x = 1;
             for (int i = current_pos[0] - vision;
                     i < current_pos[0] + vision + 1;
                     i++) {
-//                move(x, 0);
-//                refresh();
 
+                y = 0;
                 for (int j = current_pos[0] - vision;
                         j < current_pos[0] + vision + 1;
                         j++) {
                     //                    list->addNewNodes(i, j);
                     //                    cout<<list->getData(i,j);
-                    v = getValue(i, j);
-                    cout << v;
-//                    printw("%d", v);
 
+
+                    v = getValue(i, j);
+
+                    //NCURSES BUG MIATT
+                    cout << "";
+                    //NCURSES BUG MIATT
+                    move(x, y);
+                    printw("%d", v);
+                    y++;
                 }
-                //            cout << "\n";
                 x++;
 
             }
-//            move(x + vision + 1, 0);
-//            printw("%d ; %d", current_pos[0], current_pos[1]);
-//            move(vision + 1, vision);
-//        } while ((c = getch()) != 27 && !win);
-//        endwin();
+            move(x + vision + 1, 0);
+            printw("x: %d ; y: %d ; char: %d", current_pos[0], current_pos[1], c);
+            move(vision + 1, vision);
+
+            v = getValue(0, 0);
+            //            cout << "";
+            move(22, 22);
+            printw("data: %d", v);
+
+        } while ((c = getch()) != 27 && !win);
+        endwin();
     }
     delete list;
     return 0;
