@@ -1,9 +1,8 @@
 
 #include "pch.h"
 #include <iostream>
-#include <iostream>
 #include <windows.h>
-#include<conio.h>
+#include <conio.h>
 #include <tuple>
 #include <string>
 
@@ -66,15 +65,22 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 }
 
 int main(int argc, char** argv) {
+	
+	int player = 0;
 	int row = 3;
 	int col = 3;
 	int vision = 4;
+	int limit_for_win = 3;
+	int limit = 0;
+	bool win = false;
 	char** main_array = initBoard(row, col);
-
-
+	int i;
+	int j;
 	while (true)
 	{
 		system("cls");
+		SetConsoleTextAttribute(hConsole, 7);
+
 		cout << endl << cursor_X << ":" << cursor_Y << endl;
 		cout << endl << "row : " << row << ":" << " col : " << col << endl;
 
@@ -84,11 +90,34 @@ int main(int argc, char** argv) {
 					cout << ":";
 				}
 				else {
+					if (i == cursor_Y && j == cursor_X)
+					{
+						if (main_array[i][j]==Players[0] || main_array[i][j] == Players[0])
+							SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
+						else
+							SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+					}
+					else 
+						SetConsoleTextAttribute(hConsole, 7);
 					cout << main_array[i][j];
 				}
+				SetConsoleTextAttribute(hConsole, 7);
 			}
 			cout << "\n";
 		}
+		if (win){
+
+			int winner;
+			if (player % 2 == 0)
+				winner = 1;
+			else
+				winner = 0;
+			cout << "Amoba jatek" << endl;
+			cout << Players[winner] << " jatekos - nyert" << endl;
+			cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
+			break;
+		}
+		
 		switch (_getch()) {
 		case KEY_UP:
 			cursor_Y++;
@@ -103,7 +132,15 @@ int main(int argc, char** argv) {
 			cursor_X++;
 			break;
 		case KEY_ENTER:
-			main_array[cursor_Y][cursor_X] = '+';
+			if (main_array[cursor_Y][cursor_X] == Players[0] || main_array[cursor_Y][cursor_X] == Players[1]) {
+				cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+				//system("pause");
+				cin.ignore();
+				continue;
+			
+			}
+			else
+				main_array[cursor_Y][cursor_X] = Players[player];
 			break;
 		}
 		if (cursor_Y < 0){
@@ -123,12 +160,86 @@ int main(int argc, char** argv) {
 		}
 		if (cursor_X >= col) {
 			col++;
-			main_array = cloneArrayValues(row, col, 0, -1, main_array);
-			
+			main_array = cloneArrayValues(row, col, 0, -1, main_array);	
 		}
-	}
-	cout << "Amoba jatek" << endl;
-	cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
-
+		// ellenörzés soronként
+		
+		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
+			limit = 0;
+			for (j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
+				if (i < 0 || j < 0 || row <= i || col <= j) {
+					limit = 0;
+				}
+				else {
+					if (main_array[i][j] != Players[player])
+						limit = 0;
+					else {
+						limit++;
+						if (limit == limit_for_win)
+							win=true;
+					}
+				}
+			}
+		}
+		//ellenörzés oszloponként 
+		for ( j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
+			limit = 0;
+			for ( i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
+					if (i < 0 || j < 0 || row <= i || col <= j) {
+					limit = 0;
+					}
+				else {
+					if (main_array[i][j] != Players[player])
+						limit = 0;
+					else{
+						limit++;
+						if (limit == limit_for_win)
+							win = true;
+					}
+				}
+			}
+		}
+		//ellenörzés átlóban 
+		 j = cursor_X - limit_for_win;
+		limit = 0;
+		for ( i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
+			if (i < 0 || j < 0 || row <= i || col <= j) {
+				limit = 0;
+			}
+			else {
+				if (main_array[i][j] != Players[player])
+					limit = 0;
+				else {
+					limit++;
+					if (limit == limit_for_win)
+						win = true;
+				}
+			}
+			
+			j++;
+		}
+		j = cursor_X - limit_for_win;
+		limit = 0;
+		for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win+1; i++) {
+			if (i < 0 || j < 0 || row <= i || col <= j) {
+				limit = 0;
+			}
+			else {
+				if (main_array[i][j] != Players[player])
+					limit = 0;
+				else {
+					limit++;
+					if (limit == limit_for_win)
+						win = true;
+				}
+			}
+			j++;
+		}
+		if (player % 2 == 0)
+			player++;
+		else
+			player--;
+		}
+	
 	return 0;
 }
