@@ -46,6 +46,8 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 		row--;
 		row_extra = 0;
 	}
+	else if (row_extra == 0)
+		row_extra = 0;
 	else
 		row--;
 
@@ -53,11 +55,13 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 		col--;
 		col_extra = 0;
 	}
+	else if (col_extra == 0)
+		col_extra = 0;
 	else
 		col--;
-	for (int i = row_extra; i < row; i++) {
-		for (int j = col_extra; j < col; j++) {
-			newCharArray[i][j] = original_board[i][j];
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			newCharArray[i+row_extra][j+col_extra] = original_board[i][j];
 		}
 	}
 	delete[] original_board;
@@ -69,7 +73,7 @@ int main(int argc, char** argv) {
 	int player = 0;
 	int row = 3;
 	int col = 3;
-	int vision = 4;
+	int vision = 5;
 	int limit_for_win = 3;
 	int limit = 0;
 	bool win = false;
@@ -78,7 +82,7 @@ int main(int argc, char** argv) {
 	int j;
 	while (true)
 	{
-		//system("cls");
+		system("cls");
 		SetConsoleTextAttribute(hConsole, 7);
 
 		cout << endl << cursor_X << ":" << cursor_Y << endl;
@@ -190,7 +194,7 @@ int main(int argc, char** argv) {
 		//for ( j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
 		limit = 0;
 		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
-			cout << i << "_" << j;
+	//		cout << i << "_" << j;
 
 			if (i < 0 || j < 0 || row <= i || col <= j) {
 				limit = 0;
