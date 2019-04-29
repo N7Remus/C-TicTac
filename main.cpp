@@ -1,5 +1,5 @@
 
-#include "pch.h"
+//#include "pch.h"
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
@@ -27,7 +27,7 @@ int cursor_X = 1;
 int cursor_Y = 1;
 
 char** initBoard(int row, int col) {
-	char** newCharArray = new char*[row];
+	char** newCharArray = new char* [row];
 	for (int i = 0; i < row; i++) {
 		newCharArray[i] = new char[col];
 		for (int j = 0; j < col; j++) {
@@ -61,8 +61,9 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 		col--;
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
-			newCharArray[i+row_extra][j+col_extra] = original_board[i][j];
+			newCharArray[i + row_extra][j + col_extra] = original_board[i][j];
 		}
+		delete[] original_board[i];
 	}
 	delete[] original_board;
 	return newCharArray;
@@ -74,7 +75,7 @@ int main(int argc, char** argv) {
 	int row = 3;
 	int col = 3;
 	int vision = 5;
-	int limit_for_win = 3;
+	int limit_for_win = 5;
 	int limit = 0;
 	bool win = false;
 	char** main_array = initBoard(row, col);
@@ -96,7 +97,7 @@ int main(int argc, char** argv) {
 				else {
 					if (i == cursor_Y && j == cursor_X)
 					{
-						if (main_array[i][j] == Players[0] || main_array[i][j] == Players[0])
+						if (main_array[i][j] == Players[0] || main_array[i][j] == Players[1])
 							SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
 						else
 							SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
@@ -119,7 +120,28 @@ int main(int argc, char** argv) {
 			cout << "Amoba jatek" << endl;
 			cout << Players[winner] << " jatekos - nyert" << endl;
 			cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
-			break;
+			switch (_getch()) {
+			case KEY_ENTER:
+				for (int i = 0; i < row; i++) {
+					delete[] main_array[i];
+				}
+				delete[] main_array;
+				player = 0;
+				row = 3;
+				col = 3;
+				vision = 5;
+				limit_for_win = 5;
+				limit = 0;
+				win = false;
+				main_array = initBoard(row, col);
+				cursor_Y = 1;
+				cursor_X = 1;
+				continue;
+				break;
+			case KEY_ESC:
+				break;
+				break;
+			}
 		}
 
 		switch (_getch()) {
@@ -194,7 +216,7 @@ int main(int argc, char** argv) {
 		//for ( j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
 		limit = 0;
 		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
-	//		cout << i << "_" << j;
+			//		cout << i << "_" << j;
 
 			if (i < 0 || j < 0 || row <= i || col <= j) {
 				limit = 0;
@@ -251,6 +273,10 @@ int main(int argc, char** argv) {
 		else
 			player--;
 	}
+	for (int i = 0; i < row; i++) {
+		delete[] main_array[i];
+	}
+	delete[] main_array;
 
 	return 0;
 }
