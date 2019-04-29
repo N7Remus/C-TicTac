@@ -23,8 +23,31 @@ const HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 
 using namespace std;
-int cursor_X = 1;
-int cursor_Y = 1;
+int cursor_X = 0;
+int cursor_Y = 0;
+
+int cursor_x = 0;
+int cursor_y = 0;
+
+char**** initMainBoard(int row, int col) {
+	char**** newCharArray = new char*** [row];
+	for (int i = 0; i < row; i++) {
+		newCharArray[i] = new char** [col];
+		for (int j = 0; j < col; j++) {
+			newCharArray[i][j] = new char* [2];
+			for (int k = 0; k < 2; k++)
+			{
+				newCharArray[i][j][k] = new char[2];
+				for (int l = 0; l < 2; l++)
+				{
+					newCharArray[i][j][k][l] = '.';
+				}
+
+			}
+		}
+	}
+	return newCharArray;
+}
 
 char** initBoard(int row, int col) {
 	char** newCharArray = new char* [row];
@@ -63,6 +86,7 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 		for (int j = 0; j < col; j++) {
 			newCharArray[i + row_extra][j + col_extra] = original_board[i][j];
 		}
+		delete[] original_board[i];
 	}
 	delete[] original_board;
 	return newCharArray;
@@ -71,15 +95,18 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 int main(int argc, char** argv) {
 
 	int player = 0;
-	int row = 3;
-	int col = 3;
-	int vision = 5;
-	int limit_for_win = 3;
+	int row = 1;
+	int col = 1;
+	int vision = 2;
+	int limit_for_win = 5;
 	int limit = 0;
 	bool win = false;
-	char** main_array = initBoard(row, col);
+
+	char**** main_array = initMainBoard(row, col);
 	int i;
 	int j;
+	int k;
+	int l;
 	while (true)
 	{
 		system("cls");
@@ -87,39 +114,78 @@ int main(int argc, char** argv) {
 
 		cout << endl << cursor_X << ":" << cursor_Y << endl;
 		cout << endl << "row : " << row << ":" << " col : " << col << endl;
+		/*sor*/
+		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
+			/*subsor*/
+			
+			for (int k = 1; k > -1; k--)
+			{
+				/*oszlop*/
+				for (j = cursor_X - vision; j < cursor_X + vision + 1; j++) {
 
-		for (int i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
-			for (int j = cursor_X - vision; j < cursor_X + vision + 1; j++) {
-				if (i < 0 || j < 0 || row <= i || col <= j) {
-					cout << ":";
-				}
-				else {
-					if (i == cursor_Y && j == cursor_X)
+					/*suboszlop*/
+					for (l = 0; l < 2; l++)
 					{
-						if (main_array[i][j] == Players[0] || main_array[i][j] == Players[0])
-							SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
-						else
-							SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+						if (i < 0 || j < 0 || row <= i || col <= j) {
+							cout << ":";
+						}
+						else {
+							if (i == cursor_Y && j == cursor_X && k == cursor_y && l == cursor_x)
+							{
+								if (main_array[i][j][k][j] == Players[0] || main_array[i][j][k][j] == Players[1])
+									SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
+								else
+									SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+							}
+							else
+								SetConsoleTextAttribute(hConsole, 7);
+							cout << main_array[i][j][k][j];
+						}
 					}
-					else
-						SetConsoleTextAttribute(hConsole, 7);
-					cout << main_array[i][j];
+
+					SetConsoleTextAttribute(hConsole, 7);
 				}
-				SetConsoleTextAttribute(hConsole, 7);
+				if (k == 1)
+					cout << "\n";
 			}
 			cout << "\n";
+
+			
+			
 		}
-		if (win) {
+		break;
+		/*if (win) {
 
 			int winner;
 			if (player % 2 == 0)
 				winner = 1;
 			else
 				winner = 0;
-			cout << "Amoba jatek" << endl;
+			cout << "Quinque jatek" << endl;
 			cout << Players[winner] << " jatekos - nyert" << endl;
 			cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
-			break;
+			switch (_getch()) {
+			case KEY_ENTER:
+				for (int i = 0; i < row; i++) {
+					delete[] main_array[i];
+				}
+				delete[] main_array;
+				player = 0;
+				row = 3;
+				col = 3;
+				vision = 5;
+				limit_for_win = 5;
+				limit = 0;
+				win = false;
+				main_array = initBoard(row, col);
+				cursor_Y = 1;
+				cursor_X = 1;
+				continue;
+				break;
+			case KEY_ESC:
+				break;
+				break;
+			}
 		}
 
 		switch (_getch()) {
@@ -188,7 +254,7 @@ int main(int argc, char** argv) {
 
 		}
 		//}
-		//ellenörzés oszloponként 
+		//ellenörzés oszloponként
 		j = cursor_X;
 
 		//for ( j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
@@ -210,7 +276,7 @@ int main(int argc, char** argv) {
 			}
 			//}
 		}
-		//ellenörzés átlóban 
+		//ellenörzés átlóban
 		j = cursor_X - limit_for_win;
 		limit = 0;
 		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
@@ -250,7 +316,13 @@ int main(int argc, char** argv) {
 			player++;
 		else
 			player--;
+		*/
 	}
+
+	for (int i = 0; i < row; i++) {
+		delete[] main_array[i];
+	}
+	delete[] main_array;
 
 	return 0;
 }
