@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 		/*sor*/
 		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
 			/*subsor*/
-			
+
 			for (int k = 1; k > -1; k--)
 			{
 				/*oszlop*/
@@ -150,8 +150,8 @@ int main(int argc, char** argv) {
 			}
 			cout << "\n";
 
-			
-			
+
+
 		}
 		break;
 		/*if (win) {
@@ -187,7 +187,60 @@ int main(int argc, char** argv) {
 				break;
 			}
 		}
+		*/
+		switch (_getch()) {
+		case KEY_UP:
+			cursor_y++;
+			break;
+		case KEY_DOWN:
+			cursor_y--;
+			break;
+		case KEY_LEFT:
+			cursor_x--;
+			break;
+		case KEY_RIGHT:
+			cursor_x++;
+			break;
+		case KEY_ENTER:
+			/*	if (main_array[cursor_Y][cursor_X] == Players[0] || main_array[cursor_Y][cursor_X] == Players[1]) {
+					cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+					//system("pause");
+					cin.ignore();
+					continue;
+				}
+				else
+					main_array[cursor_Y][cursor_X] = Players[player];*/
+			break;
+		}
 
+		/*
+		if (cursor_y < 0) {
+			cursor_Y--;
+			if (cursor_Y < 0) {
+				row++;
+				main_array = cloneArrayValues(row, col, 1, 0, main_array);
+				cursor_Y = 0;
+			}
+		}
+		*/
+
+		/*
+		if (cursor_Y >= row) {
+			row++;
+			main_array = cloneArrayValues(row, col, -1, 0, main_array);
+
+		}
+		if (cursor_X < 0) {
+			col++;
+			main_array = cloneArrayValues(row, col, 0, 1, main_array);
+			cursor_X = 0;
+		}
+		if (cursor_X >= col) {
+			col++;
+			main_array = cloneArrayValues(row, col, 0, -1, main_array);
+		}
+
+		/*
 		switch (_getch()) {
 		case KEY_UP:
 			cursor_Y++;
