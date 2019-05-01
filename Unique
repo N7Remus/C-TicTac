@@ -14,6 +14,10 @@
 #define KEY_RIGHT 77
 #define KEY_ENTER 13
 #define KEY_ESC 27
+#define KEY_J 106
+#define KEY_M 109
+#define KEY_P 112
+#define KEY_U 117
 
 /*Játékos változó*/
 const char Players[] = { 'O','X' };
@@ -93,7 +97,7 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 }
 
 int main(int argc, char** argv) {
-
+	
 	int player = 0;
 	int row = 1;
 	int col = 1;
@@ -101,6 +105,18 @@ int main(int argc, char** argv) {
 	int limit_for_win = 5;
 	int limit = 0;
 	bool win = false;
+	
+	int lehejezett_ernyo = 0; //max 36 - játék vége
+	int jatekoslapka = 0; //max 16
+	
+	int akcio = 1;
+	int mode = 0;
+
+	bool mozgathathat = false;
+	bool mozgatott = false;
+	bool jelolhet = true;
+	bool jelolt = false;
+	bool passzolhat = false;
 
 	char**** main_array = initMainBoard(row, col);
 	int i;
@@ -109,10 +125,12 @@ int main(int argc, char** argv) {
 	int l;
 	while (true)
 	{
+		/*################################kijezlő################################################*/
 		system("cls");
 		SetConsoleTextAttribute(hConsole, 7);
 
-		cout << endl << cursor_X << ":" << cursor_Y << endl;
+		cout << endl <<"Cursor X:" <<cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
+		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
 		cout << endl << "row : " << row << ":" << " col : " << col << endl;
 		/*sor*/
 		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
@@ -139,81 +157,108 @@ int main(int argc, char** argv) {
 							}
 							else
 								SetConsoleTextAttribute(hConsole, 7);
-							cout << main_array[i][j][k][j];
+							cout << main_array[i][j][k][l];
 						}
 					}
-
+					SetConsoleTextAttribute(hConsole, 9);
+					if (j != cursor_X + vision)
+						cout << "|";
 					SetConsoleTextAttribute(hConsole, 7);
+					
+
 				}
 				if (k == 1)
 					cout << "\n";
+				
 			}
 			cout << "\n";
+			SetConsoleTextAttribute(hConsole, 9);
 
+			for (int v = 0; v < (row+2+vision)*3; v++)
+			{
+				if (v!= (row + 2 + vision) * 3-1)
+				if ((v+1)%3==0)
+					cout << "+";
+				else
+					cout << "-";
+			}
+			SetConsoleTextAttribute(hConsole, 7);
 
-
+			cout << "\n";
 		}
-		break;
-		/*if (win) {
+		
 
-			int winner;
-			if (player % 2 == 0)
-				winner = 1;
-			else
-				winner = 0;
-			cout << "Quinque jatek" << endl;
-			cout << Players[winner] << " jatekos - nyert" << endl;
-			cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
+		/*################################kijezlő################################################*/
+		if (jelolhet)
+			SetConsoleTextAttribute(hConsole, 7);
+		else
+			SetConsoleTextAttribute(hConsole, 8);
+		cout << "Jeloleshez - J" << endl;
+		if (mozgathathat)
+			SetConsoleTextAttribute(hConsole, 7);
+		else
+			SetConsoleTextAttribute(hConsole, 8); 
+		cout << "Mozgatashoz - M" << endl;
+		if (passzolhat)
+			SetConsoleTextAttribute(hConsole, 7);
+		else
+			SetConsoleTextAttribute(hConsole, 8);
+		cout << "Passzolashoz - P" << endl;
+		if (jatekoslapka<16)
+			SetConsoleTextAttribute(hConsole, 7);
+		else
+			SetConsoleTextAttribute(hConsole, 8);
+		cout << "Uj lerakashoz - U" << endl;
+		
+		/* Jelölsz vagy mozgatsz?
+			- az elején nem mozgathat 
+
+		*/
+		if (mode = 0){
 			switch (_getch()) {
-			case KEY_ENTER:
-				for (int i = 0; i < row; i++) {
-					delete[] main_array[i];
-				}
-				delete[] main_array;
-				player = 0;
-				row = 3;
-				col = 3;
-				vision = 5;
-				limit_for_win = 5;
-				limit = 0;
-				win = false;
-				main_array = initBoard(row, col);
-				cursor_Y = 1;
-				cursor_X = 1;
-				continue;
-				break;
-			case KEY_ESC:
-				break;
-				break;
+				case KEY_J:
+					mode = 1;
+					break;
 			}
 		}
-		*/
-		switch (_getch()) {
-		case KEY_UP:
-			cursor_y++;
-			break;
-		case KEY_DOWN:
-			cursor_y--;
-			break;
-		case KEY_LEFT:
-			cursor_x--;
-			break;
-		case KEY_RIGHT:
-			cursor_x++;
-			break;
-		case KEY_ENTER:
-			/*	if (main_array[cursor_Y][cursor_X] == Players[0] || main_array[cursor_Y][cursor_X] == Players[1]) {
+		else {
+			/*
+			mode 1 jelölés
+
+			*/
+			switch (_getch()) {
+			case KEY_UP:
+				cursor_y++;
+				break;
+			case KEY_DOWN:
+				cursor_y--;
+				if (cursor_y < 0) {
+					cursor_Y--;
+					if (cursor_Y<0 && cursor_Y < 0) {
+						
+					}
+				}
+				break;
+			case KEY_LEFT:
+				cursor_x--;
+				break;
+			case KEY_RIGHT:
+				cursor_x++;
+				break;
+			case KEY_ENTER:
+				if (main_array[cursor_Y][cursor_X][cursor_y][cursor_x] == Players[0] || main_array[cursor_Y][cursor_X][cursor_y][cursor_x] == Players[1]) {
 					cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
-					//system("pause");
 					cin.ignore();
 					continue;
 				}
 				else
-					main_array[cursor_Y][cursor_X] = Players[player];*/
-			break;
+					main_array[cursor_Y][cursor_X][cursor_y][cursor_x] = Players[player];
+				break;
+			}
 		}
-
-		/*
+		/*if (win || true || lehejezett_ernyo == 36)
+			break;
+		
 		if (cursor_y < 0) {
 			cursor_Y--;
 			if (cursor_Y < 0) {
