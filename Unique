@@ -33,7 +33,14 @@ int cursor_Y = 0;
 int cursor_x = 0;
 int cursor_y = 0;
 
-char**** initMainBoard(int row, int col) {
+char**** initMainBoard(int row, int col, bool make_it_empty=false) {
+	char default;
+	if (make_it_empty){
+		default ='-';
+	}
+	else{
+		default ='.';
+	}
 	char**** newCharArray = new char***[row];
 	for (int i = 0; i < row; i++) {
 		newCharArray[i] = new char**[col];
@@ -44,7 +51,7 @@ char**** initMainBoard(int row, int col) {
 				newCharArray[i][j][k] = new char[2];
 				for (int l = 0; l < 2; l++)
 				{
-					newCharArray[i][j][k][l] = '.';
+					newCharArray[i][j][k][l] = default;
 				}
 
 			}
@@ -53,22 +60,12 @@ char**** initMainBoard(int row, int col) {
 	return newCharArray;
 }
 
-char** initBoard(int row, int col) {
-	char** newCharArray = new char*[row];
-	for (int i = 0; i < row; i++) {
-		newCharArray[i] = new char[col];
-		for (int j = 0; j < col; j++) {
-			newCharArray[i][j] = '.';
-		}
-	}
-	return newCharArray;
-}
 
-char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** original_board) {
+char**** cloneArrayValues(int row, int col, int row_extra, int col_extra, char**** original_board) {
 
 
 	/* Lemásolja a orignal array értékeit */
-	char** newCharArray = initBoard(row, col);
+	char**** newCharArray = initMainBoard(row, col,true);
 	if (row_extra < 0) {
 		row--;
 		row_extra = 0;
@@ -189,7 +186,7 @@ int main(int argc, char** argv) {
 		}
 
 
-		/*################################kijezlő################################################*/
+		/*################################mód_kiválasztás################################################*/
 		if (mode == 0) {
 			if (jelolhet)
 				SetConsoleTextAttribute(hConsole, 7);
