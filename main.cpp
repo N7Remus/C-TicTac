@@ -14,6 +14,10 @@
 #define KEY_RIGHT 77
 #define KEY_ENTER 13
 #define KEY_ESC 27
+#define KEY_J 106
+#define KEY_M 109
+#define KEY_P 112
+#define KEY_U 117
 
 /*Játékos változó*/
 const char Players[] = { 'O','X' };
@@ -23,25 +27,45 @@ const HANDLE  hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 
 using namespace std;
-int cursor_X = 1;
-int cursor_Y = 1;
+int cursor_X = 0;
+int cursor_Y = 0;
 
-char** initBoard(int row, int col) {
-	char** newCharArray = new char* [row];
+int cursor_x = 0;
+int cursor_y = 0;
+
+char**** initMainBoard(int row, int col, bool make_it_empty = false) {
+	char default_v;
+	if (make_it_empty) {
+		default_v = '-';
+	}
+	else {
+		default_v = '.';
+	}
+	char**** newCharArray = new char*** [row];
 	for (int i = 0; i < row; i++) {
-		newCharArray[i] = new char[col];
+		newCharArray[i] = new char** [col];
 		for (int j = 0; j < col; j++) {
-			newCharArray[i][j] = '.';
+			newCharArray[i][j] = new char* [2];
+			for (int k = 0; k < 2; k++)
+			{
+				newCharArray[i][j][k] = new char[2];
+				for (int l = 0; l < 2; l++)
+				{
+					newCharArray[i][j][k][l] = default_v;
+				}
+
+			}
 		}
 	}
 	return newCharArray;
 }
 
-char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** original_board) {
+
+char**** cloneArrayValues(int row, int col, int row_extra, int col_extra, char**** original_board) {
 
 
 	/* Lemásolja a orignal array értékeit */
-	char** newCharArray = initBoard(row, col);
+	char**** newCharArray = initMainBoard(row, col, true);
 	if (row_extra < 0) {
 		row--;
 		row_extra = 0;
@@ -72,211 +96,656 @@ char** cloneArrayValues(int row, int col, int row_extra, int col_extra, char** o
 int main(int argc, char** argv) {
 
 	int player = 0;
-	int row = 3;
-	int col = 3;
-	int vision = 5;
+	int row = 1;
+	int col = 1;
+	int vision = 2;
 	int limit_for_win = 5;
 	int limit = 0;
 	bool win = false;
-	char** main_array = initBoard(row, col);
+	char** mozgatando = new char*[2];
+	
+	int lehejezett_ernyo = 0; //max 36 - játék vége
+	int jatekoslapka = 0; //max 16
+
+	int akcio = 1;
+	int mode = 0;
+
+	bool mozgathathat = false;
+	bool mozgatott = false;
+	bool jelolhet = true;
+	bool jelolt = false;
+	bool passzolhat = false;
+	int oldalszomszed_szam = 0;
+
+	char**** main_array = initMainBoard(row, col);
 	int i;
 	int j;
+	int k;
+	int l;
 	while (true)
 	{
+		/*################################kijezlő################################################*/
 		system("cls");
 		SetConsoleTextAttribute(hConsole, 7);
 
-		cout << endl << cursor_X << ":" << cursor_Y << endl;
+		cout << endl << "Cursor X:" << cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
+		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
 		cout << endl << "row : " << row << ":" << " col : " << col << endl;
 
-		for (int i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
-			for (int j = cursor_X - vision; j < cursor_X + vision + 1; j++) {
-				if (i < 0 || j < 0 || row <= i || col <= j) {
-					cout << ":";
-				}
-				else {
-					if (i == cursor_Y && j == cursor_X)
+		/*sor*/
+		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
+			/*subsor*/
+
+			for (k = 1; k > -1; k--)
+			{
+				/*oszlop*/
+				for (j = cursor_X - vision; j < cursor_X + vision + 1; j++) {
+
+					/*suboszlop*/
+					for (l = 0; l < 2; l++)
 					{
-						if (main_array[i][j] == Players[0] || main_array[i][j] == Players[1])
-							SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
-						else
-							SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+						if (i < 0 || j < 0 || row <= i || col <= j) {
+							if (mode == 2 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 14);
+							else if (mode == 3 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 23);
+							else if (mode == 4 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 41);
+
+							cout << ":";
+						}
+						else {
+							if (i == cursor_Y && j == cursor_X && k == cursor_y && l == cursor_x)
+							{
+							
+								if (main_array[i][j][k][j] == Players[0] || main_array[i][j][k][j] == Players[1])
+									SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
+								else
+									SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
+							}
+							else
+								SetConsoleTextAttribute(hConsole, 7);
+							if (mode == 2 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 14);
+							else if (mode == 3 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 23);
+							else if (mode == 4 && i == cursor_Y && j == cursor_X)
+								SetConsoleTextAttribute(hConsole, 41);
+
+							cout << main_array[i][j][k][l];
+
+						}
 					}
-					else
-						SetConsoleTextAttribute(hConsole, 7);
-					cout << main_array[i][j];
+					SetConsoleTextAttribute(hConsole, 9);
+					if (j != cursor_X + vision)
+						cout << "|";
+					SetConsoleTextAttribute(hConsole, 7);
+
+
 				}
-				SetConsoleTextAttribute(hConsole, 7);
+				if (k == 1)
+					cout << "\n";
+
 			}
 			cout << "\n";
-		}
-		if (win) {
+			SetConsoleTextAttribute(hConsole, 9);
 
-			int winner;
-			if (player % 2 == 0)
-				winner = 1;
+			for (int v = 0; v < (3 + vision) * 3; v++)
+			{
+				if (v != (3 + vision) * 3 - 1)
+					if ((v + 1) % 3 == 0)
+						cout << "+";
+					else
+						cout << "-";
+			}
+			SetConsoleTextAttribute(hConsole, 7);
+
+			cout << "\n";
+		}
+
+
+		/*################################mód_kiválasztás################################################*/
+
+		/* Jelölsz vagy mozgatsz?
+			- az elején nem mozgathat
+
+		*/
+		if (mode == 0) {
+			if (jelolhet)
+				SetConsoleTextAttribute(hConsole, 7);
 			else
-				winner = 0;
-			cout << "Amoba jatek" << endl;
-			cout << Players[winner] << " jatekos - nyert" << endl;
-			cout << "Jatek kezdesehez nyomj Enter-t" << endl << "Kilepeshez ESC-t" << endl;
+				SetConsoleTextAttribute(hConsole, 8);
+			cout << "Jeloleshez - J" << endl;
+			if (mozgathathat)
+				SetConsoleTextAttribute(hConsole, 7);
+			else
+				SetConsoleTextAttribute(hConsole, 8);
+			cout << "Mozgatashoz - M" << endl;
+			if (passzolhat)
+				SetConsoleTextAttribute(hConsole, 7);
+			else
+				SetConsoleTextAttribute(hConsole, 8);
+			cout << "Passzolashoz - P" << endl;
+			if (jatekoslapka < 16)
+				SetConsoleTextAttribute(hConsole, 7);
+			else
+				SetConsoleTextAttribute(hConsole, 8);
+			cout << "Uj lerakashoz - U" << endl;
+
 			switch (_getch()) {
-			case KEY_ENTER:
-				for (int i = 0; i < row; i++) {
-					delete[] main_array[i];
-				}
-				delete[] main_array;
-				player = 0;
-				row = 3;
-				col = 3;
-				vision = 5;
-				limit_for_win = 5;
-				limit = 0;
-				win = false;
-				main_array = initBoard(row, col);
-				cursor_Y = 1;
-				cursor_X = 1;
-				continue;
+			case KEY_J:
+				mode = 1;
 				break;
-			case KEY_ESC:
+			case KEY_U:
+				mode = 2;
 				break;
+			case KEY_M:
+				mode = 3;
 				break;
 			}
 		}
-
-		switch (_getch()) {
-		case KEY_UP:
-			cursor_Y++;
-			break;
-		case KEY_DOWN:
-			cursor_Y--;
-			break;
-		case KEY_LEFT:
-			cursor_X--;
-			break;
-		case KEY_RIGHT:
-			cursor_X++;
-			break;
-		case KEY_ENTER:
-			if (main_array[cursor_Y][cursor_X] == Players[0] || main_array[cursor_Y][cursor_X] == Players[1]) {
-				cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
-				//system("pause");
-				cin.ignore();
-				continue;
-			}
-			else
-				main_array[cursor_Y][cursor_X] = Players[player];
-			break;
-		}
-		if (cursor_Y < 0) {
-			row++;
-			main_array = cloneArrayValues(row, col, 1, 0, main_array);
-			cursor_Y = 0;
-		}
-		if (cursor_Y >= row) {
-			row++;
-			main_array = cloneArrayValues(row, col, -1, 0, main_array);
-
-		}
-		if (cursor_X < 0) {
-			col++;
-			main_array = cloneArrayValues(row, col, 0, 1, main_array);
-			cursor_X = 0;
-		}
-		if (cursor_X >= col) {
-			col++;
-			main_array = cloneArrayValues(row, col, 0, -1, main_array);
-		}
-		// ellenörzés soronként
-
-		i = cursor_Y;
-
-		//for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
-		limit = 0;
-		for (j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
-			//j = cursor_X;
-			if (i < 0 || j < 0 || row <= i || col <= j) {
-				limit = 0;
-			}
-			else {
-				if (main_array[i][j] != Players[player])
-					limit = 0;
-				else {
-					limit++;
-					if (limit == limit_for_win)
-						win = true;
+		/*################################modóok###############################################################*/
+		else {
+			//mode 1 jelölés->mode0
+			if (mode == 1) {
+				cout << "Jeloleshez - Enter";
+				switch (_getch()) {
+				case KEY_UP:
+					cursor_y++;
+					if (cursor_y > 1) {
+						cursor_Y++;
+						if (cursor_Y > row - 1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y--;
+							cursor_y--;
+							continue;
+						}
+						else {
+							cursor_y -= 2;
+						}
+					}
+					break;
+				case KEY_DOWN:
+					cursor_y--;
+					if (cursor_y < 0) {
+						cursor_Y--;
+						if (cursor_Y < 0) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y++;
+							cursor_y++;
+							continue;
+						}
+						else {
+							cursor_y += 2;
+						}
+					}
+					break;
+				case KEY_LEFT:
+					cursor_x--;
+					if (cursor_x < 0) {
+						cursor_X--;
+						if (cursor_X < 0) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X++;
+							cursor_x++;
+							continue;
+						}
+						else {
+							cursor_x += 2;
+						}
+					}
+					break;
+				case KEY_RIGHT:
+					cursor_x++;
+					if (cursor_x > 1) {
+						cursor_X++;
+						if (cursor_X > col - 1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X--;
+							cursor_x--;
+							continue;
+						}
+						else {
+							cursor_x -= 2;
+						}
+					}
+					break;
+				case KEY_ENTER:
+					if (main_array[cursor_Y][cursor_X][cursor_y][cursor_x] != '.') {
+						cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+						continue;
+					}
+					else {
+						main_array[cursor_Y][cursor_X][cursor_y][cursor_x] = Players[player];
+						mode = 0;
+					}
+					break;
 				}
 			}
+			//mode 2 új lehelyezése->mode0
+			if (mode == 2) {
+				switch (_getch()) {
+				case KEY_UP:
+					cursor_y++;
+					if (cursor_y > 1) {
+						cursor_Y++;
+						if (cursor_Y > row) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y--;
+							cursor_y--;
+							continue;
+						}
+						else {
+							cursor_y -= 2;
+						}
+					}
+					break;
+				case KEY_DOWN:
+					cursor_y--;
+					if (cursor_y < 0) {
+						cursor_Y--;
+						if (cursor_Y < -1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y++;
+							cursor_y++;
+							continue;
+						}
+						else {
+							cursor_y += 2;
+						}
+					}
+					break;
+				case KEY_LEFT:
+					cursor_x--;
+					if (cursor_x < 0) {
+						cursor_X--;
+						if (cursor_X < -1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X++;
+							cursor_x++;
+							continue;
+						}
+						else {
+							cursor_x += 2;
+						}
+					}
+					break;
+				case KEY_RIGHT:
+					cursor_x++;
+					if (cursor_x > 1) {
+						cursor_X++;
+						if (cursor_X > col) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X--;
+							cursor_x--;
+							continue;
+						}
+						else {
+							cursor_x -= 2;
+						}
+					}
+					break;
+				case KEY_ENTER:
+					/*bővítés*/
+					if (cursor_Y < 0) {
+						row++;
+						main_array = cloneArrayValues(row, col, 1, 0, main_array);
+						cursor_Y = 0;
+					}
+					if (cursor_Y >= row) {
+						row++;
+						main_array = cloneArrayValues(row, col, -1, 0, main_array);
 
-		}
-		//}
-		//ellenörzés oszloponként 
-		j = cursor_X;
+					}
+					if (cursor_X < 0) {
+						col++;
+						main_array = cloneArrayValues(row, col, 0, 1, main_array);
+						cursor_X = 0;
+					}
+					if (cursor_X >= col) {
+						col++;
+						main_array = cloneArrayValues(row, col, 0, -1, main_array);
+					}
+					bool err = false;
+					/* Megnézzük hogy van e már valami ott ahova új lapot akar lerakni */
+					if (cursor_Y >= 0 && cursor_Y < row && cursor_X >= 0 && cursor_X < col) {
+						if (main_array[cursor_Y][cursor_X][0][0] != '-') {
+							err = true;
+						}
 
-		//for ( j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
-		limit = 0;
-		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
-			//		cout << i << "_" << j;
+					}
+					/* Megnézzük hogy van e már oldalszomszédja */
+					bool oldalszomszed = false;
+					if (cursor_Y - 1 >= 0) {
+						if (main_array[cursor_Y-1][cursor_X][0][0] != '-') {
+							oldalszomszed = true;
+						
+						}
+					}
+					if (cursor_Y + 1 < row) {
+						if (main_array[cursor_Y +1][cursor_X][0][0] != '-') {
+							oldalszomszed = true;
 
-			if (i < 0 || j < 0 || row <= i || col <= j) {
-				limit = 0;
-			}
-			else {
-				if (main_array[i][j] != Players[player])
-					limit = 0;
-				else {
-					limit++;
-					if (limit == limit_for_win)
-						win = true;
+						}
+					}
+					if (cursor_X - 1 >= 0) {
+						if (main_array[cursor_Y][cursor_X - 1][0][0] != '-') {
+							oldalszomszed = true;
+
+						}
+					}
+					if (cursor_X + 1 < col) {
+						if (main_array[cursor_Y][cursor_X + 1][0][0] != '-') {
+							oldalszomszed = true;
+						}
+					}
+
+					if (err ) {
+						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+					}
+					else if (!oldalszomszed) {
+						cout << endl << "Nincs oldalszomszed" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+					}
+					else {
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								main_array[cursor_Y][cursor_X][i][j] = '.';
+							}
+						}
+						mode = 0;
+
+						break;
+					}
 				}
 			}
-			//}
-		}
-		//ellenörzés átlóban 
-		j = cursor_X - limit_for_win;
-		limit = 0;
-		for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
-			if (i < 0 || j < 0 || row <= i || col <= j) {
-				limit = 0;
-			}
-			else {
-				if (main_array[i][j] != Players[player])
-					limit = 0;
-				else {
-					limit++;
-					if (limit == limit_for_win)
-						win = true;
-				}
-			}
+			//mode 4 tile áthelyezése hova ->mode0
+			if (mode == 4) {
+				switch (_getch()) {
+				case KEY_UP:
+					cursor_y++;
+					if (cursor_y > 1) {
+						cursor_Y++;
+						if (cursor_Y > row) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y--;
+							cursor_y--;
+							continue;
+						}
+						else {
+							cursor_y -= 2;
+						}
+					}
+					break;
+				case KEY_DOWN:
+					cursor_y--;
+					if (cursor_y < 0) {
+						cursor_Y--;
+						if (cursor_Y < -1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y++;
+							cursor_y++;
+							continue;
+						}
+						else {
+							cursor_y += 2;
+						}
+					}
+					break;
+				case KEY_LEFT:
+					cursor_x--;
+					if (cursor_x < 0) {
+						cursor_X--;
+						if (cursor_X < -1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X++;
+							cursor_x++;
+							continue;
+						}
+						else {
+							cursor_x += 2;
+						}
+					}
+					break;
+				case KEY_RIGHT:
+					cursor_x++;
+					if (cursor_x > 1) {
+						cursor_X++;
+						if (cursor_X > col) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X--;
+							cursor_x--;
+							continue;
+						}
+						else {
+							cursor_x -= 2;
+						}
+					}
+					break;
+				case KEY_ENTER:
+					/*bővítés*/
+					if (cursor_Y < 0) {
+						row++;
+						main_array = cloneArrayValues(row, col, 1, 0, main_array);
+						cursor_Y = 0;
+					}
+					if (cursor_Y >= row) {
+						row++;
+						main_array = cloneArrayValues(row, col, -1, 0, main_array);
 
-			j++;
-		}
-		j = cursor_X - limit_for_win;
-		limit = 0;
-		for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win + 1; i++) {
-			if (i < 0 || j < 0 || row <= i || col <= j) {
-				limit = 0;
+					}
+					if (cursor_X < 0) {
+						col++;
+						main_array = cloneArrayValues(row, col, 0, 1, main_array);
+						cursor_X = 0;
+					}
+					if (cursor_X >= col) {
+						col++;
+						main_array = cloneArrayValues(row, col, 0, -1, main_array);
+					}
+					bool err = false;
+					/* Megnézzük hogy van e már valami ott ahova új lapot akar lerakni */
+					if (cursor_Y >= 0 && cursor_Y < row && cursor_X >= 0 && cursor_X < col) {
+						if (main_array[cursor_Y][cursor_X][0][0] != '-') {
+							err = true;
+						}
+
+					}
+					/* Megnézzük hogy van e már oldalszomszédja */
+					bool oldalszomszed = false;
+					if (cursor_Y - 1 >= 0) {
+						if (main_array[cursor_Y - 1][cursor_X][0][0] != '-') {
+							oldalszomszed = true;
+
+						}
+					}
+					if (cursor_Y + 1 < row) {
+						if (main_array[cursor_Y + 1][cursor_X][0][0] != '-') {
+							oldalszomszed = true;
+
+						}
+					}
+					if (cursor_X - 1 >= 0) {
+						if (main_array[cursor_Y][cursor_X - 1][0][0] != '-') {
+							oldalszomszed = true;
+
+						}
+					}
+					if (cursor_X + 1 < col) {
+						if (main_array[cursor_Y][cursor_X + 1][0][0] != '-') {
+							oldalszomszed = true;
+						}
+					}
+
+					if (err) {
+						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+					}
+					else if (!oldalszomszed) {
+						cout << endl << "Nincs oldalszomszed" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+					}
+					else {
+
+						for (int k = 0; k < 2; k++)
+						{
+							for (int l = 0; l < 2; l++)
+							{
+								main_array[cursor_Y][cursor_X][k][l] = mozgatando[k][l];
+
+							}
+						}
+						//						main_array[cursor_Y][cursor_X]=mozgatando;
+
+						mode = 0;
+
+						break;
+					}
+				}
+
 			}
-			else {
-				if (main_array[i][j] != Players[player])
-					limit = 0;
-				else {
-					limit++;
-					if (limit == limit_for_win)
-						win = true;
+			//mode 3 tile áthelyezése honnan->mode4
+			if (mode == 3) {
+				switch (_getch()) {
+				case KEY_UP:
+					cursor_y++;
+					if (cursor_y > 1) {
+						cursor_Y++;
+						if (cursor_Y > row - 1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y--;
+							cursor_y--;
+							continue;
+						}
+						else {
+							cursor_y -= 2;
+						}
+					}
+					break;
+				case KEY_DOWN:
+					cursor_y--;
+					if (cursor_y < 0) {
+						cursor_Y--;
+						if (cursor_Y < 0) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_Y++;
+							cursor_y++;
+							continue;
+						}
+						else {
+							cursor_y += 2;
+						}
+					}
+					break;
+				case KEY_LEFT:
+					cursor_x--;
+					if (cursor_x < 0) {
+						cursor_X--;
+						if (cursor_X < 0) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X++;
+							cursor_x++;
+							continue;
+						}
+						else {
+							cursor_x += 2;
+						}
+					}
+					break;
+				case KEY_RIGHT:
+					cursor_x++;
+					if (cursor_x > 1) {
+						cursor_X++;
+						if (cursor_X > col - 1) {
+							cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+							cin.ignore();
+							cursor_X--;
+							cursor_x--;
+							continue;
+						}
+						else {
+							cursor_x -= 2;
+						}
+					}
+					break;
+				case KEY_ENTER:
+					oldalszomszed_szam = 0;
+					if (cursor_Y - 1 >= 0) {
+						if (main_array[cursor_Y - 1][cursor_X][0][0] != '-') {
+							oldalszomszed_szam++;
+
+						}
+					}
+					if (cursor_Y + 1 < row) {
+						if (main_array[cursor_Y + 1][cursor_X][0][0] != '-') {
+							oldalszomszed_szam++;
+
+						}
+					}
+					if (cursor_X - 1 >= 0) {
+						if (main_array[cursor_Y][cursor_X - 1][0][0] != '-') {
+							oldalszomszed_szam++;
+
+						}
+					}
+					if (cursor_X + 1 < col) {
+						if (main_array[cursor_Y][cursor_X + 1][0][0] != '-') {
+							oldalszomszed_szam++;
+						}
+					}
+					if (oldalszomszed_szam==4) {
+						cout << "Ervenytelen korbe van zarva" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+						continue;
+					}
+					else if (main_array[cursor_Y][cursor_X][cursor_y][cursor_x] == '-') {
+						cout << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
+						cin.ignore();
+						continue;
+					}
+					/*Ellenörizzük hogy van e 4 szomszédos lapka*/
+
+					else {
+						//mozgatando = main_array[cursor_Y][cursor_X];
+						for (int k = 0; k < 2; k++)
+						{
+							mozgatando[k] = new char[2];
+							for (int l = 0; l < 2; l++)
+							{
+								mozgatando[k][l] = main_array[cursor_Y][cursor_X][k][l];
+								main_array[cursor_Y][cursor_X][k][l] = '-';
+							}
+
+						}
+						
+						mode = 4;
+					}
+					break;
 				}
 			}
-			j++;
+			
 		}
-		if (player % 2 == 0)
-			player++;
-		else
-			player--;
+		/*felszabadítás*/
 	}
-	for (int i = 0; i < row; i++) {
-		delete[] main_array[i];
-	}
-	delete[] main_array;
-
 	return 0;
+
 }
