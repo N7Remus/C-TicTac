@@ -153,7 +153,7 @@ int main(int argc, char** argv) {
 								SetConsoleTextAttribute(hConsole, 23);
 							else if (mode == 4 && i == cursor_Y && j == cursor_X)
 								SetConsoleTextAttribute(hConsole, 41);
-							else 
+							else
 								SetConsoleTextAttribute(hConsole, 8);
 
 							cout << ":";
@@ -194,9 +194,9 @@ int main(int argc, char** argv) {
 			cout << "\n";
 			SetConsoleTextAttribute(hConsole, 9);
 
-			for (int v = 0; v < 3+ (vision*2) * 3; v++)
+			for (int v = 0; v < 3 + (vision * 2) * 3; v++)
 			{
-				if (v != 3 + (vision * 2) * 3 -1 )
+				if (v != 3 + (vision * 2) * 3 - 1)
 					if ((v + 1) % 3 == 0)
 						cout << "+";
 					else
@@ -582,7 +582,7 @@ int main(int argc, char** argv) {
 				switch (_getch()) {
 				case KEY_UP:
 					cursor_Y++;
-					if (cursor_Y > row) {
+					if (cursor_Y > row - 1) {
 						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
 						cursor_Y--;
@@ -591,7 +591,7 @@ int main(int argc, char** argv) {
 					break;
 				case KEY_DOWN:
 					cursor_Y--;
-					if (cursor_Y < -1) {
+					if (cursor_Y < 0) {
 						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
 						cursor_Y++;
@@ -601,7 +601,7 @@ int main(int argc, char** argv) {
 					break;
 				case KEY_LEFT:
 					cursor_X--;
-					if (cursor_X < -1) {
+					if (cursor_X < 0) {
 						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
 						cursor_X++;
@@ -611,7 +611,7 @@ int main(int argc, char** argv) {
 					break;
 				case KEY_RIGHT:
 					cursor_X++;
-					if (cursor_X > col) {
+					if (cursor_X > col - 1) {
 						cout << endl << "Ervenytelen" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
 						cursor_X--;
@@ -646,45 +646,51 @@ int main(int argc, char** argv) {
 						}
 					}
 					/* Ellenőrizzük hogy van e pályaszakadás ha kivesszük */
-					int oldalszomszed_szam_V; 
+					int oldalszomszed_szam_V;
 					bool palyaszakadas = false;
-					for (int  i = 0; i < row; i++)
+					for (int i = 0; i < row; i++)
 					{
 						for (int j = 0; j < col; j++)
 						{
-							
-							if (main_array[i][j][0][0] != '-') {
+							/* Amit vizsgálok ne legyen 'üres' */
+							if (main_array[i][j][0][0] != '-' && i != cursor_Y && j != cursor_X) {
 								oldalszomszed_szam_V = 0;
+							// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd.
 								if (i - 1 >= 0) {
-									if (main_array[i- 1][j][0][0] != '-' && i - 1 != cursor_Y && j != cursor_X) {
+									if (main_array[i - 1][j][0][0] != '-' && (i - 1 != cursor_Y && j != cursor_X)) {
 										oldalszomszed_szam_V++;
-
+										cout << "van oldalszomszedja:" << i << j << " oldalszomsz1d: " << i - 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
+										cin.ignore();
 									}
 								}
-								if (i+ 1 < row) {
-									if (main_array[i+ 1][j][0][0] != '-' && i + 1 != cursor_Y && j != cursor_X) {
+								if (i + 1 < row) {
+									if (main_array[i + 1][j][0][0] != '-' && (i + 1 != cursor_Y && j != cursor_X)) {
 										oldalszomszed_szam_V++;
-
+										cout << "van oldalszomszedja:" << i << j << " oldalszomsz2d: " << i + 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
+										cin.ignore();
 									}
 								}
 								if (j - 1 >= 0) {
-									if (main_array[i][j- 1][0][0] != '-' && i != cursor_Y && j - 1 != cursor_X) {
+									if (main_array[i][j - 1][0][0] != '-' && (i != cursor_Y && j - 1 != cursor_X)) {
 										oldalszomszed_szam_V++;
-
+										cout << "van oldalszomszedja:" << i << j << " oldalszomsz3d: " << i - 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
+										cin.ignore();
 									}
 								}
 								if (j + 1 < col) {
-									if (main_array[i][j + 1][0][0] != '-' && i != cursor_Y && j + 1 != cursor_X) {
+									if (main_array[i][j + 1][0][0] != '-' && (i != cursor_Y && j + 1 != cursor_X)) {
 										oldalszomszed_szam_V++;
+										cout << "van oldalszomszedja:" << i << j << " oldalszomsz4d: " << i << j + 1 << endl << "Folytatashoz uss le egy billentyut..." << endl;
+										cin.ignore();
 									}
 								}
-								if (oldalszomszed_szam_V == 0) {
+								if (oldalszomszed_szam_V < 1) {
 									palyaszakadas = true;
 								}
 							}
 						}
 					}
-					
+
 					if (oldalszomszed_szam == 4) {
 						cout << "Ervenytelen korbe van zarva" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
