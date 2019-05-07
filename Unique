@@ -648,49 +648,109 @@ int main(int argc, char** argv) {
 					/* Ellenőrizzük hogy van e pályaszakadás ha kivesszük */
 					int oldalszomszed_szam_V;
 					bool palyaszakadas = false;
+					int** arr = new int* [row];
 					for (int i = 0; i < row; i++)
 					{
+						arr[i] = new int[col];
 						for (int j = 0; j < col; j++)
 						{
+							arr[i][j] = 0;
+						}
+					}
+
+
+					for (i = row - 1; i > -1; i--) {
+						for (int j = 0; j < col; j++)
+						{
+							oldalszomszed_szam_V = 0;
 							/* Amit vizsgálok ne legyen 'üres' */
-							if (main_array[i][j][0][0] != '-' && i != cursor_Y && j != cursor_X) {
-								oldalszomszed_szam_V = 0;
-							// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd.
+							if (main_array[i][j][0][0] != '-' && (i != cursor_Y || j != cursor_X)) {
+
+								// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd.
 								if (i - 1 >= 0) {
-									if (main_array[i - 1][j][0][0] != '-' && (i - 1 != cursor_Y && j != cursor_X)) {
+									if (main_array[i - 1][j][0][0] != '-' && (i - 1 != cursor_X || j != cursor_Y)) {
 										oldalszomszed_szam_V++;
-										cout << "van oldalszomszedja:" << i << j << " oldalszomsz1d: " << i - 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
-										cin.ignore();
 									}
 								}
 								if (i + 1 < row) {
-									if (main_array[i + 1][j][0][0] != '-' && (i + 1 != cursor_Y && j != cursor_X)) {
+									if (main_array[i + 1][j][0][0] != '-' && (i + 1 != cursor_X || j != cursor_Y)) {
 										oldalszomszed_szam_V++;
-										cout << "van oldalszomszedja:" << i << j << " oldalszomsz2d: " << i + 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
-										cin.ignore();
 									}
 								}
 								if (j - 1 >= 0) {
-									if (main_array[i][j - 1][0][0] != '-' && (i != cursor_Y && j - 1 != cursor_X)) {
+									if (main_array[i][j - 1][0][0] != '-' && (i != cursor_X || j - 1 != cursor_Y)) {
 										oldalszomszed_szam_V++;
-										cout << "van oldalszomszedja:" << i << j << " oldalszomsz3d: " << i - 1 << j << endl << "Folytatashoz uss le egy billentyut..." << endl;
-										cin.ignore();
 									}
 								}
 								if (j + 1 < col) {
-									if (main_array[i][j + 1][0][0] != '-' && (i != cursor_Y && j + 1 != cursor_X)) {
+									if (main_array[i][j + 1][0][0] != '-' && (i != cursor_X || j + 1 != cursor_Y)) {
 										oldalszomszed_szam_V++;
-										cout << "van oldalszomszedja:" << i << j << " oldalszomsz4d: " << i << j + 1 << endl << "Folytatashoz uss le egy billentyut..." << endl;
-										cin.ignore();
 									}
 								}
 								if (oldalszomszed_szam_V < 1) {
 									palyaszakadas = true;
 								}
+
+							}
+							if (oldalszomszed_szam_V < 1) {
+								cout << 0;
+								arr[i][j] = 0;
+							}
+							else {
+								cout << 1;
+								arr[i][j] = 1;
 							}
 						}
+						cout << endl;
 					}
+					cin.ignore();
+					int legnagyobb;
+					int incremental = 2;
+					do {
+						for (i = row - 1; i > -1; i--) {
+							for (int j = 0; j < col; j++)
+							{
 
+								/* Amit vizsgálok ne legyen 'üres' */
+								if (arr[i][j] != 0) {
+									legnagyobb = arr[i][j];
+									if (i - 1 >= 0) {
+										if (arr[i - 1][j] > legnagyobb) {
+											legnagyobb = arr[i - 1][j];
+										}
+									}
+									if (i + 1 < row) {
+										if (arr[i + 1][j] > legnagyobb) {
+											legnagyobb = arr[i + 1][j];
+										}
+									}
+									if (j - 1 >= 0) {
+										if (arr[i][j - 1] > legnagyobb) {
+											legnagyobb = arr[i][j - 1];
+										}
+									}
+									if (j + 1 < col) {
+										if (arr[i][j + 1] > legnagyobb) {
+											legnagyobb = arr[i][j + 1];
+										}
+									}
+									if (legnagyobb > arr[i][j]) {
+										arr[i][j] = legnagyobb;
+									}
+									else {
+										arr[i][j] = incremental;
+										incremental++;
+									}
+
+								}
+
+								cout << arr[i][j];
+							}
+							cout << endl;
+						}
+						cin.ignore();
+
+					} while (true);
 					if (oldalszomszed_szam == 4) {
 						cout << "Ervenytelen korbe van zarva" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
