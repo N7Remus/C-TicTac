@@ -621,7 +621,7 @@ int main(int argc, char** argv) {
 				case KEY_ENTER:
 					oldalszomszed_szam = 0;
 					/*Ellenörizzük hogy van e 4 szomszédos lapka*/
-
+					
 					if (cursor_Y - 1 >= 0) {
 						if (main_array[cursor_Y - 1][cursor_X][0][0] != '-') {
 							oldalszomszed_szam++;
@@ -645,9 +645,11 @@ int main(int argc, char** argv) {
 							oldalszomszed_szam++;
 						}
 					}
+					
 					/* Ellenőrizzük hogy van e pályaszakadás ha kivesszük */
 					int oldalszomszed_szam_V;
 					bool palyaszakadas = false;
+					/* Tömb debugoláshoz illetve vizuális pályaszakadás keresésre */	
 					int** arr = new int* [row];
 					for (int i = 0; i < row; i++)
 					{
@@ -657,16 +659,17 @@ int main(int argc, char** argv) {
 							arr[i][j] = 0;
 						}
 					}
-
-
 					for (i = row - 1; i > -1; i--) {
 						for (int j = 0; j < col; j++)
 						{
+							// megnézzük hogy a vizsgált elemnek van e szomszédja 
 							oldalszomszed_szam_V = 0;
-							/* Amit vizsgálok ne legyen 'üres' */
+							// ha amit vizsgálok ne legyen 'üres'
 							if (main_array[i][j][0][0] != '-' && (i != cursor_Y || j != cursor_X)) {
 
-								// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd.
+								// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd,
+
+								// illetve ha az amit ki akarok venni
 								if (i - 1 >= 0) {
 									if (main_array[i - 1][j][0][0] != '-' && (i - 1 != cursor_X || j != cursor_Y)) {
 										oldalszomszed_szam_V++;
@@ -703,54 +706,111 @@ int main(int argc, char** argv) {
 						}
 						cout << endl;
 					}
-					cin.ignore();
+
 					int legnagyobb;
 					int incremental = 2;
-					do {
-						for (i = row - 1; i > -1; i--) {
-							for (int j = 0; j < col; j++)
-							{
 
-								/* Amit vizsgálok ne legyen 'üres' */
-								if (arr[i][j] != 0) {
-									legnagyobb = arr[i][j];
-									if (i - 1 >= 0) {
-										if (arr[i - 1][j] > legnagyobb) {
-											legnagyobb = arr[i - 1][j];
-										}
+					for (i = row - 1; i > -1; i--) {
+						for (int j = col - 1; j > -1; j--)
+						{
+
+							/* Amit vizsgálok ne legyen 'üres' */
+							if (arr[i][j] != 0) {
+								legnagyobb = 0;
+								if (i - 1 >= 0) {
+									if (arr[i - 1][j] > legnagyobb) {
+										legnagyobb = arr[i - 1][j];
 									}
-									if (i + 1 < row) {
-										if (arr[i + 1][j] > legnagyobb) {
-											legnagyobb = arr[i + 1][j];
-										}
+								}
+								if (i + 1 < row) {
+									if (arr[i + 1][j] > legnagyobb) {
+										legnagyobb = arr[i + 1][j];
 									}
-									if (j - 1 >= 0) {
-										if (arr[i][j - 1] > legnagyobb) {
-											legnagyobb = arr[i][j - 1];
-										}
+								}
+								if (j - 1 >= 0) {
+									if (arr[i][j - 1] > legnagyobb) {
+										legnagyobb = arr[i][j - 1];
 									}
-									if (j + 1 < col) {
-										if (arr[i][j + 1] > legnagyobb) {
-											legnagyobb = arr[i][j + 1];
-										}
+								}
+								if (j + 1 < col) {
+									if (arr[i][j + 1] > legnagyobb) {
+										legnagyobb = arr[i][j + 1];
 									}
-									if (legnagyobb > arr[i][j]) {
-										arr[i][j] = legnagyobb;
-									}
-									else {
+								}
+								/* Van nagyobb szomszéd? */
+								if (legnagyobb > arr[i][j]) {
+									arr[i][j] = legnagyobb;
+								}
+								else if (legnagyobb == arr[i][j])
+								{
+									if (incremental - 2 == 0) {
 										arr[i][j] = incremental;
 										incremental++;
 									}
+								}
+								else {
+									arr[i][j] = incremental;
+									incremental++;
+								}
+							}
+						}
+
+						for (int j = 0; j < col; j++)
+						{
+
+							/* Amit vizsgálok ne legyen 'üres' */
+							if (arr[i][j] != 0) {
+								legnagyobb = arr[i][j];
+								if (i - 1 >= 0) {
+									if (arr[i - 1][j] > legnagyobb) {
+										legnagyobb = arr[i - 1][j];
+									}
+								}
+								if (i + 1 < row) {
+									if (arr[i + 1][j] > legnagyobb) {
+										legnagyobb = arr[i + 1][j];
+									}
+								}
+								if (j - 1 >= 0) {
+									if (arr[i][j - 1] > legnagyobb) {
+										legnagyobb = arr[i][j - 1];
+									}
+								}
+								if (j + 1 < col) {
+									if (arr[i][j + 1] > legnagyobb) {
+										legnagyobb = arr[i][j + 1];
+									}
+								}
+								if (legnagyobb > arr[i][j]) {
+									arr[i][j] = legnagyobb;
+								}
+								else if (legnagyobb == arr[i][j])
+								{
 
 								}
-
-								cout << arr[i][j];
+								else {
+									arr[i][j] = incremental;
+									incremental++;
+								}
 							}
-							cout << endl;
+							cout << arr[i][j];
 						}
-						cin.ignore();
 
-					} while (true);
+						cout << endl;
+					}
+					/* Ellenörzés hogy minden elem ugyan az e, ha nem akkor pályaszakadás van*/
+
+					for (i = row - 1; i > -1; i--) {
+						for (int j = col - 1; j > -1; j--)
+						{
+							/* Amit vizsgálok ne legyen 'üres' */
+							if (arr[i][j] != 0) {
+								if (arr[i][j] != incremental-1)
+									palyaszakadas = true;
+							}
+						}
+					}
+					
 					if (oldalszomszed_szam == 4) {
 						cout << "Ervenytelen korbe van zarva" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
