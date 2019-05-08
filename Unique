@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 
 		cout << endl << "Cursor X:" << cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
 		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
-		cout << endl << "row : " << row << ":" << " col : " << col << endl;
+		cout << endl << "row : " << row << ":" << " col : " << col << " jatekos:" <<Players[player]<< endl;
 		if (!jelolhet && !mozgathathat && !ujjat_lehejezhet && !passzolhat) {
 			if (player == 0)
 				player = 1;
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 				player = 0;
 			jelolhet = true;
 			ujjat_lehejezhet = true;
-			if (jatekoslapka > 1)
+			if (jatekoslapka > 0)
 				mozgathathat = true;
 		}
 			
@@ -254,10 +254,12 @@ int main(int argc, char** argv) {
 				if (jelolhet) {
 					mode = 1;
 					jelolhet = false;
+					ujjat_lehejezhet = false;
+
 				}
 				else
 				{
-					cout << "Nem Passzolhat!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cout << "Nem Jelölhet!" << "Folytatashoz uss le egy billentyut..." << endl;
 					cin.ignore();
 				}
 				continue;
@@ -265,11 +267,38 @@ int main(int argc, char** argv) {
 				break;
 
 			case KEY_U:
-				mode = 2;
+				if (ujjat_lehejezhet) {
+					mode = 2;
+					ujjat_lehejezhet = false;
+					jatekoslapka++;
+					mozgathathat = false;
+				}
+				else
+				{
+					cout << "Nem helyezhet le ujjat!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cin.ignore();
+				}
+				continue;
 				break;
 
 			case KEY_M:
-				mode = 3;
+				if (mozgathathat) {
+					mode = 3;
+					if (akcio==2)
+						mozgathathat = false;
+					akcio++;
+					jelolhet = false;
+					ujjat_lehejezhet = false;
+					passzolhat = true;
+				}
+				else
+				{
+					cout << "Nem mozgathat!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cin.ignore();
+				}
+				continue;
+
+
 				break;
 			case KEY_P:
 				if (passzolhat) {
