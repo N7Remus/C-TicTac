@@ -59,8 +59,6 @@ char**** initMainBoard(int row, int col, bool make_it_empty = false) {
 	}
 	return newCharArray;
 }
-
-
 char**** cloneArrayValues(int row, int col, int row_extra, int col_extra, char**** original_board) {
 
 
@@ -113,11 +111,12 @@ int main(int argc, char** argv) {
 	int mozgatas_elotti_X;
 	int mozgatas_elotti_Y;
 	bool mozgathathat = false;
-	bool mozgatott = false;
 	bool jelolhet = true;
-	bool jelolt = false;
 	bool passzolhat = false;
+	bool ujjat_lehejezhet = false;
 	int oldalszomszed_szam = 0;
+	int elozo_korben_jelolt_Y = NULL;
+	int elozo_korben_jelolt_X = NULL;
 
 	char**** main_array = initMainBoard(row, col);
 	int i;
@@ -133,7 +132,17 @@ int main(int argc, char** argv) {
 		cout << endl << "Cursor X:" << cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
 		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
 		cout << endl << "row : " << row << ":" << " col : " << col << endl;
-
+		if (!jelolhet && !mozgathathat && !ujjat_lehejezhet && !passzolhat) {
+			if (player == 0)
+				player = 1;
+			else
+				player = 0;
+			jelolhet = true;
+			ujjat_lehejezhet = true;
+			if (jatekoslapka > 1)
+				mozgathathat = true;
+		}
+			
 		/*sor*/
 		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
 			/*subsor*/
@@ -220,32 +229,66 @@ int main(int argc, char** argv) {
 			else
 				SetConsoleTextAttribute(hConsole, 8);
 			cout << "Jeloleshez - J" << endl;
+
 			if (mozgathathat)
 				SetConsoleTextAttribute(hConsole, 7);
 			else
 				SetConsoleTextAttribute(hConsole, 8);
 			cout << "Mozgatashoz - M" << endl;
+
 			if (passzolhat)
 				SetConsoleTextAttribute(hConsole, 7);
 			else
 				SetConsoleTextAttribute(hConsole, 8);
 			cout << "Passzolashoz - P" << endl;
-			if (jatekoslapka < 16)
+
+			if (ujjat_lehejezhet && jatekoslapka < 16)
 				SetConsoleTextAttribute(hConsole, 7);
 			else
 				SetConsoleTextAttribute(hConsole, 8);
 			cout << "Uj lerakashoz - U" << endl;
 
 			switch (_getch()) {
+
 			case KEY_J:
-				mode = 1;
+				if (jelolhet) {
+					mode = 1;
+					jelolhet = false;
+				}
+				else
+				{
+					cout << "Nem Passzolhat!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cin.ignore();
+				}
+				continue;
+				
 				break;
+
 			case KEY_U:
 				mode = 2;
 				break;
+
 			case KEY_M:
 				mode = 3;
 				break;
+			case KEY_P:
+				if (passzolhat) {
+					if (player == 0)
+						player = 1;
+					else
+						player = 0;
+					jelolhet = true;
+					ujjat_lehejezhet = true;
+					if (jatekoslapka > 1)
+						mozgathathat=true;
+
+				}
+				else
+				{
+					cout << "Nem Passzolhat!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cin.ignore();
+				}
+				continue;
 			}
 		}
 		/*################################modóok###############################################################*/
@@ -621,7 +664,7 @@ int main(int argc, char** argv) {
 				case KEY_ENTER:
 					oldalszomszed_szam = 0;
 					/*Ellenörizzük hogy van e 4 szomszédos lapka*/
-					
+
 					if (cursor_Y - 1 >= 0) {
 						if (main_array[cursor_Y - 1][cursor_X][0][0] != '-') {
 							oldalszomszed_szam++;
@@ -645,11 +688,11 @@ int main(int argc, char** argv) {
 							oldalszomszed_szam++;
 						}
 					}
-					
+
 					/* Ellenőrizzük hogy van e pályaszakadás ha kivesszük */
 					int oldalszomszed_szam_V;
 					bool palyaszakadas = false;
-					/* Tömb debugoláshoz illetve vizuális pályaszakadás keresésre */	
+					/* Tömb debugoláshoz illetve vizuális pályaszakadás keresésre */
 					int** arr = new int* [row];
 					for (int i = 0; i < row; i++)
 					{
@@ -805,12 +848,12 @@ int main(int argc, char** argv) {
 						{
 							/* Amit vizsgálok ne legyen 'üres' */
 							if (arr[i][j] != 0) {
-								if (arr[i][j] != incremental-1)
+								if (arr[i][j] != incremental - 1)
 									palyaszakadas = true;
 							}
 						}
 					}
-					
+
 					if (oldalszomszed_szam == 4) {
 						cout << "Ervenytelen korbe van zarva" << endl << "Folytatashoz uss le egy billentyut..." << endl;
 						cin.ignore();
