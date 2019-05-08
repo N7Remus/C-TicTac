@@ -136,6 +136,7 @@ int main(int argc, char** argv) {
 			else
 				player = 0;
 			jelolhet = true;
+			passzolhat = false;
 			ujjat_lehejezhet = true;
 			if (jatekoslapka > 1)
 				mozgathathat = true;
@@ -290,11 +291,15 @@ int main(int argc, char** argv) {
 					if (akcio == 2) {
 						akcio = 1;
 						mozgathathat = false;
+						passzolhat = false;
 					}
+					else {
+						passzolhat = true;
+					}
+					
 					akcio++;
 					jelolhet = false;
 					ujjat_lehejezhet = false;
-					passzolhat = true;
 				}
 				else
 				{
@@ -315,7 +320,7 @@ int main(int argc, char** argv) {
 					ujjat_lehejezhet = true;
 					if (jatekoslapka > 1)
 						mozgathathat = true;
-
+					passzolhat = false;
 				}
 				else
 				{
@@ -403,6 +408,7 @@ int main(int argc, char** argv) {
 					}
 					else {
 						main_array[cursor_Y][cursor_X][cursor_y][cursor_x] = Players[player];
+						//Ellenörzés ##########################################################
 						/*Ellenörzés a sorban*/
 						limit = 0;
 						/*sor*/
@@ -460,12 +466,61 @@ int main(int argc, char** argv) {
 							}
 						}
 						/* Ellenörzés átlóban */
+						j = cursor_X - limit_for_win;
+						limit = 0;
+						for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
+							if (i < 0 || j < 0 || row <= i || col <= j) {
+								limit = 0;
+							}
+							else {
+								if (main_array[i][j][1][0] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+								if (main_array[i][j][0][1] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+							}
+							j++;
+						}
+						
+						j = cursor_X - limit_for_win;
+						limit = 0;
+						for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win + 1; i++) {
+							if (i < 0 || j < 0 || row <= i || col <= j) {
+								limit = 0;
+							}
+							else {
 
+								if (main_array[i][j][0][0] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+								if (main_array[i][j][1][1] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+							}
+							j++;
+						}
 
 
 						if (win)
 						{
-							cout << Players[player] << " NYERT!!";
+							cout << endl << Players[player] << " NYERT!!";
 						}
 						mode = 0;
 					}
@@ -712,6 +767,120 @@ int main(int argc, char** argv) {
 
 							}
 						}
+						//Ellenörzés ##########################################################
+						/*Ellenörzés a sorban*/
+						limit = 0;
+						/*sor*/
+						i = cursor_Y;
+						/*subsor*/
+						k = cursor_y;
+						/*oszlop*/
+						for (j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
+							/*suboszlop*/
+							for (l = 0; l < 2; l++)
+							{
+								if (i < 0 || j < 0 || row <= i || col <= j) {
+									/*érvénytelen lapkák*/
+								}
+								else {
+									if (main_array[i][j][k][l] == Players[player])
+									{
+										limit++;
+										if (limit == limit_for_win)
+											win = true;
+									}
+									else {
+										limit = 0;
+									}
+
+								}
+							}
+						}
+						/*Ellenörzés oszlopban */
+						limit = 0;
+						/*oszlop*/
+						j = cursor_X;
+						/*suboszlop*/
+						l = cursor_x;
+						/*sor*/
+						for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win + 1; i++) {
+							/*subsor*/
+							for (k = 0; k < 2; k++)
+							{
+								if (i < 0 || j < 0 || row <= i || col <= j) {
+									/*érvénytelen lapkák*/
+								}
+								else {
+									if (main_array[i][j][k][l] == Players[player])
+									{
+										limit++;
+										if (limit == limit_for_win)
+											win = true;
+									}
+									else {
+										limit = 0;
+									}
+
+								}
+							}
+						}
+						/* Ellenörzés átlóban */
+						j = cursor_X - limit_for_win;
+						limit = 0;
+						for (i = cursor_Y + limit_for_win; i > cursor_Y - limit_for_win - 1; i--) {
+							if (i < 0 || j < 0 || row <= i || col <= j) {
+								limit = 0;
+							}
+							else {
+								if (main_array[i][j][1][0] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+								if (main_array[i][j][0][1] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+							}
+							j++;
+						}
+
+						j = cursor_X - limit_for_win;
+						limit = 0;
+						for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win + 1; i++) {
+							if (i < 0 || j < 0 || row <= i || col <= j) {
+								limit = 0;
+							}
+							else {
+
+								if (main_array[i][j][0][0] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+								if (main_array[i][j][1][1] != Players[player])
+									limit = 0;
+								else {
+									limit++;
+									if (limit == limit_for_win)
+										win = true;
+								}
+							}
+							j++;
+						}
+
+
+						if (win)
+						{
+							cout << endl << Players[player] << " NYERT!!";
+						}
 						mode = 0;
 						break;
 					}
@@ -831,7 +1000,7 @@ int main(int argc, char** argv) {
 										oldalszomszed_szam_V++;
 									}
 								}
-								if (oldalszomszed_szam_V < 1) {
+								if (oldalszomszed_szam_V < 1 && jatekoslapka>2) {
 									palyaszakadas = true;
 								}
 
@@ -946,7 +1115,7 @@ int main(int argc, char** argv) {
 						{
 							/* Amit vizsgálok ne legyen 'üres' */
 							if (arr[i][j] != 0) {
-								if (arr[i][j] != incremental - 1)
+								if (arr[i][j] != incremental - 1 && jatekoslapka>2)
 									palyaszakadas = true;
 							}
 						}
