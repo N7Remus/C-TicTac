@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
 	char** mozgatando = new char* [2];
 
 	int lehejezett_ernyo = 0; //max 36 - játék vége
-	int jatekoslapka = 0; //max 16
+	int jatekoslapka = 1; //max 16
 
 	int akcio = 1;
 	int mode = 0;
@@ -123,15 +123,13 @@ int main(int argc, char** argv) {
 	int j;
 	int k;
 	int l;
-	while (true)
+
+	while (!win)
 	{
 		/*################################kijezlő################################################*/
 		system("cls");
 		SetConsoleTextAttribute(hConsole, 7);
 
-		cout << endl << "Cursor X:" << cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
-		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
-		cout << endl << "row : " << row << ":" << " col : " << col << " jatekos:" <<Players[player]<< endl;
 		if (!jelolhet && !mozgathathat && !ujjat_lehejezhet && !passzolhat) {
 			if (player == 0)
 				player = 1;
@@ -139,10 +137,14 @@ int main(int argc, char** argv) {
 				player = 0;
 			jelolhet = true;
 			ujjat_lehejezhet = true;
-			if (jatekoslapka > 0)
+			if (jatekoslapka > 1)
 				mozgathathat = true;
 		}
-			
+		cout << endl << "Cursor X:" << cursor_X << " - " << "Cursor Y:" << cursor_Y << endl;
+		cout << endl << "Cursor x:" << cursor_x << " - " << "Cursor y:" << cursor_y << endl;
+		cout << endl << "row : " << row << ":" << " col : " << col << " jatekos:" << Players[player] << endl;
+
+
 		/*sor*/
 		for (i = cursor_Y + vision; i > cursor_Y - vision - 1; i--) {
 			/*subsor*/
@@ -224,7 +226,7 @@ int main(int argc, char** argv) {
 
 		*/
 		if (mode == 0) {
-			if (jelolhet)
+			if (jelolhet && lehejezett_ernyo < jatekoslapka * 4)
 				SetConsoleTextAttribute(hConsole, 7);
 			else
 				SetConsoleTextAttribute(hConsole, 8);
@@ -251,19 +253,20 @@ int main(int argc, char** argv) {
 			switch (_getch()) {
 
 			case KEY_J:
-				if (jelolhet) {
+				if (jelolhet && lehejezett_ernyo < jatekoslapka * 4) {
 					mode = 1;
 					jelolhet = false;
 					ujjat_lehejezhet = false;
-
+					mozgathathat = false;
+					lehejezett_ernyo++;
 				}
 				else
 				{
-					cout << "Nem Jelölhet!" << "Folytatashoz uss le egy billentyut..." << endl;
+					cout << "Nem Jelolhet!" << "Folytatashoz uss le egy billentyut..." << endl;
 					cin.ignore();
 				}
 				continue;
-				
+
 				break;
 
 			case KEY_U:
@@ -284,8 +287,10 @@ int main(int argc, char** argv) {
 			case KEY_M:
 				if (mozgathathat) {
 					mode = 3;
-					if (akcio==2)
+					if (akcio == 2) {
+						akcio = 1;
 						mozgathathat = false;
+					}
 					akcio++;
 					jelolhet = false;
 					ujjat_lehejezhet = false;
@@ -309,7 +314,7 @@ int main(int argc, char** argv) {
 					jelolhet = true;
 					ujjat_lehejezhet = true;
 					if (jatekoslapka > 1)
-						mozgathathat=true;
+						mozgathathat = true;
 
 				}
 				else
@@ -398,6 +403,70 @@ int main(int argc, char** argv) {
 					}
 					else {
 						main_array[cursor_Y][cursor_X][cursor_y][cursor_x] = Players[player];
+						/*Ellenörzés a sorban*/
+						limit = 0;
+						/*sor*/
+						i = cursor_Y;
+						/*subsor*/
+						k = cursor_y;
+						/*oszlop*/
+						for (j = cursor_X - limit_for_win; j < cursor_X + limit_for_win + 1; j++) {
+							/*suboszlop*/
+							for (l = 0; l < 2; l++)
+							{
+								if (i < 0 || j < 0 || row <= i || col <= j) {
+									/*érvénytelen lapkák*/
+								}
+								else {
+									if (main_array[i][j][k][l] == Players[player])
+									{
+										limit++;
+										if (limit == limit_for_win)
+											win = true;
+									}
+									else {
+										limit = 0;
+									}
+
+								}
+							}
+						}
+						/*Ellenörzés oszlopban */
+						limit = 0;
+						/*oszlop*/
+						j = cursor_X;
+						/*suboszlop*/
+						l = cursor_x;
+						/*sor*/
+						for (i = cursor_Y - limit_for_win; i < cursor_Y + limit_for_win + 1; i++) {
+							/*subsor*/
+							for (k = 0; k < 2; k++)
+							{
+								if (i < 0 || j < 0 || row <= i || col <= j) {
+									/*érvénytelen lapkák*/
+								}
+								else {
+									if (main_array[i][j][k][l] == Players[player])
+									{
+										limit++;
+										if (limit == limit_for_win)
+											win = true;
+									}
+									else {
+										limit = 0;
+									}
+
+								}
+							}
+						}
+						/* Ellenörzés átlóban */
+
+
+
+						if (win)
+						{
+							cout << Players[player] << " NYERT!!";
+						}
 						mode = 0;
 					}
 					break;
@@ -923,6 +992,7 @@ int main(int argc, char** argv) {
 
 		}
 	}
+	
 	/*felszabadítás*/
 
 	return 0;
