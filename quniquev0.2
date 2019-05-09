@@ -236,28 +236,28 @@ bool palyaszakadas() {
 			// megnézzük hogy a vizsgált elemnek van e szomszédja 
 			oldalszomszed_szam_V = 0;
 			// ha amit vizsgálok ne legyen 'üres'
-			if (main_array[i][j][0][0] != '-' && (i != cursor_Y || j != cursor_X)) {
+			if (main_array[i][j][0][0] != '-' ) {
 
 				// Amit vizsgálok oldalszomszéd ne legyen üres, ha az akkor nincs oldalszomszéd,
 
 				// illetve ha az amit ki akarok venni
 				if (i - 1 >= 0) {
-					if (main_array[i - 1][j][0][0] != '-' && (i - 1 != cursor_X || j != cursor_Y)) {
+					if (main_array[i - 1][j][0][0] != '-') {
 						oldalszomszed_szam_V++;
 					}
 				}
 				if (i + 1 < row) {
-					if (main_array[i + 1][j][0][0] != '-' && (i + 1 != cursor_X || j != cursor_Y)) {
+					if (main_array[i + 1][j][0][0] != '-' ) {
 						oldalszomszed_szam_V++;
 					}
 				}
 				if (j - 1 >= 0) {
-					if (main_array[i][j - 1][0][0] != '-' && (i != cursor_X || j - 1 != cursor_Y)) {
+					if (main_array[i][j - 1][0][0] != '-' ) {
 						oldalszomszed_szam_V++;
 					}
 				}
 				if (j + 1 < col) {
-					if (main_array[i][j + 1][0][0] != '-' && (i != cursor_X || j + 1 != cursor_Y)) {
+					if (main_array[i][j + 1][0][0] != '-' ) {
 						oldalszomszed_szam_V++;
 					}
 				}
@@ -325,7 +325,7 @@ bool palyaszakadas() {
 				}
 			}
 		}
-
+		cout << endl;
 		for (int j = 0; j < col; j++)
 		{
 
@@ -932,7 +932,7 @@ int main(int argc, char** argv) {
 
 							}
 						}
-
+						//kijelzes();
 						bool p = palyaszakadas();
 						if (p) {
 							ervenytelen_lepes("Palyaszakadas");
