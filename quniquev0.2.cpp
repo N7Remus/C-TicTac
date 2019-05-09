@@ -81,6 +81,7 @@ int mode = 0;
 int mozgatas_elotti_X;
 int mozgatas_elotti_Y;
 bool mozgathathat = false;
+bool jelenleg_mozgat = false;
 bool jelolhet = true;
 bool passzolhat = false;
 bool ujjat_lehejezhet = true;
@@ -641,7 +642,7 @@ void kijelzes() {
 }
 
 void status() {
-	if (!jelolhet && !mozgathathat && !ujjat_lehejezhet && !passzolhat) {
+	if (!jelolhet && !mozgathathat && !ujjat_lehejezhet && !passzolhat && !jelenleg_mozgat) {
 		if (player == 0)
 			player = 1;
 		else
@@ -743,6 +744,7 @@ int main(int argc, char** argv) {
 						akcio = 1;
 						mozgathathat = false;
 						passzolhat = false;
+						jelenleg_mozgat = true;
 					}
 					else {
 						passzolhat = true;
@@ -772,6 +774,7 @@ int main(int argc, char** argv) {
 					if (jatekoslapka > 1)
 						mozgathathat = true;
 					passzolhat = false;
+					akcio = 1;
 				}
 				else
 				{
@@ -957,11 +960,13 @@ int main(int argc, char** argv) {
 							continue;
 
 						}
+						ellenorzes();
 						if (win)
 						{
 							cout << endl << Players[player] << " NYERT!!";
 						}
 						mode = 0;
+						jelenleg_mozgat = false;
 						break;
 					}
 				}
