@@ -143,9 +143,9 @@ void lepes_UP() {
 		}
 	}
 }
-void lepes_UP_dupla() {
+void lepes_UP_dupla(int csokkent = 0) {
 	cursor_Y++;
-	if (cursor_Y > row) {
+	if (cursor_Y > row-csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_Y--;
 	}
@@ -165,9 +165,9 @@ void lepes_DOWN() {
 		}
 	}
 }
-void lepes_DOWN_dupla() {
+void lepes_DOWN_dupla(int csokkent = 0) {
 	cursor_Y--;
-	if (cursor_Y < -1) {
+	if (cursor_Y < -1+csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_Y++;
 	}
@@ -187,9 +187,9 @@ void lepes_LEFT() {
 		}
 	}
 }
-void lepes_LEFT_dupla() {
+void lepes_LEFT_dupla(int csokkent = 0) {
 	cursor_X--;
-	if (cursor_X < -1) {
+	if (cursor_X < -1+csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_X++;
 	}
@@ -210,9 +210,9 @@ void lepes_RIGHT() {
 		}
 	}
 }
-void lepes_RIGHT_dupla() {
+void lepes_RIGHT_dupla(int csokkent = 0) {
 	cursor_X++;
-	if (cursor_X > col) {
+	if (cursor_X > col-csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_X--;
 	}
@@ -976,15 +976,15 @@ int main(int argc, char** argv) {
 			if (mode == 3) {
 				switch (_getch()) {
 				case KEY_UP:
-					lepes_UP_dupla();
+					lepes_UP_dupla(1);
 				case KEY_DOWN:
-					lepes_DOWN_dupla();
+					lepes_DOWN_dupla(1);
 					break;
 				case KEY_LEFT:
-					lepes_LEFT_dupla();
+					lepes_LEFT_dupla(1);
 					break;
 				case KEY_RIGHT:
-					lepes_RIGHT_dupla();
+					lepes_RIGHT_dupla(1);
 					break;
 				case KEY_ENTER:
 					oldalszomszed_szam = 0;
