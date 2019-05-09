@@ -88,7 +88,8 @@ bool ujjat_lehejezhet = true;
 int oldalszomszed_szam = 0;
 int elozo_korben_jelolt_Y = NULL;
 int elozo_korben_jelolt_X = NULL;
-
+int ebben_a_korben_lerakott_X;
+int ebben_a_korben_lerakott_Y;
 void ervenytelen_lepes(string s) {
 	cout << endl
 		<< s << endl
@@ -148,6 +149,11 @@ void lepes_UP_dupla(int csokkent = 0) {
 	if (cursor_Y > row-csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_Y--;
+	}
+	else {
+
+		ervenytelen_lepes("dmakmd");
+
 	}
 }
 void lepes_DOWN() {
@@ -652,6 +658,9 @@ void status() {
 		ujjat_lehejezhet = true;
 		if (jatekoslapka > 1)
 			mozgathathat = true;
+
+		ebben_a_korben_lerakott_X = -1;
+		ebben_a_korben_lerakott_X = -1;
 	}
 }
 
@@ -775,6 +784,8 @@ int main(int argc, char** argv) {
 						mozgathathat = true;
 					passzolhat = false;
 					akcio = 1;
+					ebben_a_korben_lerakott_X = -1;
+					ebben_a_korben_lerakott_X = -1;
 				}
 				else
 				{
@@ -816,7 +827,8 @@ int main(int argc, char** argv) {
 						}
 						mode = 0;
 						jelolhet = false;
-
+						ebben_a_korben_lerakott_X = cursor_X;
+						ebben_a_korben_lerakott_Y = cursor_Y;
 					}
 					break;
 				}
@@ -886,12 +898,22 @@ int main(int argc, char** argv) {
 					/*bővítés*/
 					bovit();
 					bool err = false;
+
+					/*A mozgatandóhoz sorba vagy  oszlopba egyezik e */
+					if (mozgatas_elotti_X == cursor_X || mozgatas_elotti_Y == cursor_Y || mozgatas_elotti_Y - cursor_Y == mozgatas_elotti_X-cursor_X || mozgatas_elotti_Y - cursor_Y == -(mozgatas_elotti_X - cursor_X)) {
+						
+							ervenytelen_lepes("OK");
+						
+					}else {
+						ervenytelen_lepes("Nem jó sorban/oszlopba lett mozgatva");
+//						continue;
+					}
+
 					/* Megnézzük hogy van e már valami ott ahova új lapot akar lerakni */
 					if (cursor_Y >= 0 && cursor_Y < row && cursor_X >= 0 && cursor_X < col) {
 						if (main_array[cursor_Y][cursor_X][0][0] != '-') {
 							err = true;
 						}
-
 					}
 					/* Megnézzük hogy van e már oldalszomszédja */
 					bool oldalszomszed = false;
@@ -977,6 +999,7 @@ int main(int argc, char** argv) {
 				switch (_getch()) {
 				case KEY_UP:
 					lepes_UP_dupla(1);
+					break;
 				case KEY_DOWN:
 					lepes_DOWN_dupla(1);
 					break;
@@ -1024,11 +1047,12 @@ int main(int argc, char** argv) {
 						ervenytelen_lepes("A lapka üres");
 						continue;
 					}
-
-					else {
+					
+					else if (ebben_a_korben_lerakott_X!=cursor_X || ebben_a_korben_lerakott_Y!=cursor_Y) {
 						mozgatas_elotti_X = cursor_X;
 						mozgatas_elotti_Y = cursor_Y;
-
+						ebben_a_korben_lerakott_X = -1;
+						ebben_a_korben_lerakott_X = -1;
 						for (int k = 0; k < 2; k++)
 						{
 							mozgatando[k] = new char[2];
@@ -1041,6 +1065,9 @@ int main(int argc, char** argv) {
 						}
 
 						mode = 4;
+					}
+					else {
+						ervenytelen_lepes("Ebben a korben lerakott nem mozgathato");
 					}
 					break;
 				}
@@ -1058,8 +1085,6 @@ int main(int argc, char** argv) {
 			for (int k = 0; k < 2; k++)
 			{
 				delete[] main_array[i][j][k];
-
-
 			}
 			delete[] main_array[i][j];
 		}
