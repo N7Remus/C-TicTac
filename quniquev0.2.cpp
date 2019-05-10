@@ -485,20 +485,23 @@ void bovit() {
 		row++;
 		main_array = cloneArrayValues(row, col, 1, 0, main_array);
 		cursor_Y = 0;
+		mozgatas_elotti_Y++;
 	}
 	if (cursor_Y >= row) {
 		row++;
 		main_array = cloneArrayValues(row, col, -1, 0, main_array);
-
+		//mozgatas_elotti_Y--;
 	}
 	if (cursor_X < 0) {
 		col++;
 		main_array = cloneArrayValues(row, col, 0, 1, main_array);
 		cursor_X = 0;
+		mozgatas_elotti_X++;
 	}
 	if (cursor_X >= col) {
 		col++;
 		main_array = cloneArrayValues(row, col, 0, -1, main_array);
+		//mozgatas_elotti_X--;
 	}
 }
 void ellenorzes() {
