@@ -367,6 +367,95 @@ bool palyaszakadas() {
 					incremental++;
 				}
 			}
+
+			cout << arr[i][j];
+		}
+
+		cout << endl;
+	}
+	for (i = 0; i < row; i++) {
+		for (int j = col - 1; j > -1; j--)
+		{
+
+			/* Amit vizsgálok ne legyen 'üres' */
+			if (arr[i][j] != 0) {
+				legnagyobb = 0;
+				if (i - 1 >= 0) {
+					if (arr[i - 1][j] > legnagyobb) {
+						legnagyobb = arr[i - 1][j];
+					}
+				}
+				if (i + 1 < row) {
+					if (arr[i + 1][j] > legnagyobb) {
+						legnagyobb = arr[i + 1][j];
+					}
+				}
+				if (j - 1 >= 0) {
+					if (arr[i][j - 1] > legnagyobb) {
+						legnagyobb = arr[i][j - 1];
+					}
+				}
+				if (j + 1 < col) {
+					if (arr[i][j + 1] > legnagyobb) {
+						legnagyobb = arr[i][j + 1];
+					}
+				}
+				/* Van nagyobb szomszéd? */
+				if (legnagyobb > arr[i][j]) {
+					arr[i][j] = legnagyobb;
+				}
+				else if (legnagyobb == arr[i][j])
+				{
+					if (incremental - 2 == 0) {
+						arr[i][j] = incremental;
+						incremental++;
+					}
+				}
+				else {
+					arr[i][j] = incremental;
+					incremental++;
+				}
+			}
+		}
+		for (int j = 0; j < col; j++)
+		{
+
+			/* Amit vizsgálok ne legyen 'üres' */
+			if (arr[i][j] != 0) {
+				legnagyobb = arr[i][j];
+				if (i - 1 >= 0) {
+					if (arr[i - 1][j] > legnagyobb) {
+						legnagyobb = arr[i - 1][j];
+					}
+				}
+				if (i + 1 < row) {
+					if (arr[i + 1][j] > legnagyobb) {
+						legnagyobb = arr[i + 1][j];
+					}
+				}
+				if (j - 1 >= 0) {
+					if (arr[i][j - 1] > legnagyobb) {
+						legnagyobb = arr[i][j - 1];
+					}
+				}
+				if (j + 1 < col) {
+					if (arr[i][j + 1] > legnagyobb) {
+						legnagyobb = arr[i][j + 1];
+					}
+				}
+				if (legnagyobb > arr[i][j]) {
+					arr[i][j] = legnagyobb;
+				}
+				else if (legnagyobb == arr[i][j])
+				{
+
+				}
+				else {
+					arr[i][j] = incremental;
+					incremental++;
+				}
+			}
+
 			cout << arr[i][j];
 		}
 
@@ -1072,7 +1161,7 @@ int main(int argc, char** argv) {
 				}
 			}
 
-		}
+		} 
 	}
 	if (!win) {
 		cout << "Dontetlen!";
