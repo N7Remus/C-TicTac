@@ -990,7 +990,7 @@ int main(int argc, char** argv) {
 					/*A mozgatandóhoz sorba vagy  oszlopba egyezik e */
 					if (mozgatas_elotti_X == cursor_X || mozgatas_elotti_Y == cursor_Y || mozgatas_elotti_Y - cursor_Y == mozgatas_elotti_X-cursor_X || mozgatas_elotti_Y - cursor_Y == -(mozgatas_elotti_X - cursor_X)) {
 						
-							ervenytelen_lepes("OK");
+							//ervenytelen_lepes("OK");
 						
 					}else {
 						ervenytelen_lepes("Nem jó sorban/oszlopba lett mozgatva");
@@ -1031,9 +1031,11 @@ int main(int argc, char** argv) {
 
 					if (err) {
 						ervenytelen_lepes("Ervenytelen");
+						continue;
 					}
 					else if (!oldalszomszed) {
 						ervenytelen_lepes("Nincs oldalszomszed!");
+						continue;
 					}
 					else {
 
@@ -1049,7 +1051,6 @@ int main(int argc, char** argv) {
 						bool p = palyaszakadas();
 						if (p) {
 							ervenytelen_lepes("Palyaszakadas");
-
 							for (int k = 0; k < 2; k++)
 							{
 								for (int l = 0; l < 2; l++)
