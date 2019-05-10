@@ -997,7 +997,7 @@ int main(int argc, char** argv) {
 						
 					}else {
 						ervenytelen_lepes("Nem jó sorban/oszlopba lett mozgatva");
-//						continue;
+						continue;
 					}
 
 					/* Megnézzük hogy van e már valami ott ahova új lapot akar lerakni */
