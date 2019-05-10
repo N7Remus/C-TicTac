@@ -847,6 +847,7 @@ int main(int argc, char** argv) {
 						jelenleg_mozgat = true;
 					}
 					else {
+						mozgathathat = true;
 						passzolhat = true;
 					}
 
