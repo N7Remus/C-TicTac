@@ -84,7 +84,7 @@ bool mozgathathat = false;
 bool jelenleg_mozgat = false;
 bool jelolhet = true;
 bool passzolhat = false;
-bool ujjat_lehejezhet = true;
+bool ujjat_lehejezhet = false;
 int oldalszomszed_szam = 0;
 int elozo_korben_jelolt_Y = NULL;
 int elozo_korben_jelolt_X = NULL;
@@ -149,11 +149,6 @@ void lepes_UP_dupla(int csokkent = 0) {
 	if (cursor_Y > row-csokkent) {
 		ervenytelen_lepes("Ervenytelen");
 		cursor_Y--;
-	}
-	else {
-
-		ervenytelen_lepes("dmakmd");
-
 	}
 }
 void lepes_DOWN() {
@@ -271,6 +266,7 @@ bool palyaszakadas() {
 				if (oldalszomszed_szam_V < 1 && jatekoslapka>2) {
 					//palyaszakadas = true;
 				}
+				oldalszomszed_szam_V++;
 
 			}
 			if (oldalszomszed_szam_V < 1) {
@@ -385,6 +381,9 @@ bool palyaszakadas() {
 			if (arr[i][j] != 0) {
 				if (arr[i][j] != incremental - 1 && jatekoslapka > 2)
 					palyaszakadas = true;
+			}
+			else {
+//				palyaszakadas = false;
 			}
 		}
 	}
