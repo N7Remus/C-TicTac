@@ -478,6 +478,11 @@ bool palyaszakadas() {
 	}
 	cin.ignore();
 
+	for (int i = 0; i < row; i++)
+	{
+		delete[] arr[i];
+	}
+	delete[] arr;
 	return palyaszakadas;
 }
 void bovit() {
